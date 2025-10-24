@@ -1,7 +1,14 @@
-// src/components/AuthPage.jsx
-
 import React, { useState } from "react";
-import { FaUser, FaLock, FaFacebookF, FaGoogle, FaLine } from "react-icons/fa";
+import {
+  FaUser,
+  FaLock,
+  FaFacebookF,
+  FaGoogle,
+  FaLine,
+  FaUserMd,
+  FaUserTie,
+  FaUsers,
+} from "react-icons/fa";
 import {
   auth,
   db,
@@ -11,41 +18,56 @@ import {
   signInWithPopup,
   setDoc,
   doc,
+  getDoc, // เพิ่ม getDoc
 } from "../firebase";
 import "./AuthPage.css";
 import ForgotPassword from "./ForgotPassword"; // Component ลืมรหัสผ่าน
-import RoleSelectorSignUp from "./RoleSelectorSignUp";
 
-// --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี ---
-const saveUserToFirestore = async (user, role = "patient") => {
-  // โค้ดสำหรับการบันทึกข้อมูลยังคงเดิม
+// --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี (แก้ไข Logic คงค่า Role) ---
+const saveUserToFirestore = async (user, newRole = null) => {
   const userRef = doc(db, "users", user.uid);
+  let currentRole = newRole || "patient";
+
   try {
+    const docSnap = await getDoc(userRef);
+
+    if (docSnap.exists()) {
+      currentRole = docSnap.data().role; // ใช้ Role เดิมที่บันทึกไว้
+    } else {
+      currentRole = newRole || "patient";
+    }
+
     await setDoc(
       userRef,
       {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || user.email.split("@")[0],
-        role: role,
-        createdAt: new Date(),
+        role: currentRole,
+        createdAt: docSnap.exists() ? docSnap.data().createdAt : new Date(),
+        lastLogin: new Date(),
       },
       { merge: true }
     );
-    console.log("User data successfully saved/updated in Firestore.");
+    console.log(`User data saved/updated. Role: ${currentRole}`);
+    return currentRole;
   } catch (error) {
     console.error("Error writing document to Firestore: ", error);
+    return currentRole;
   }
 };
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [showForgot, setShowForgot] = useState(false); // สถานะควบคุมการแสดงผล
+  const [showForgot, setShowForgot] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // *** State ใหม่สำหรับ Role Selector ***
+  const [selectedRole, setSelectedRole] = useState("patient");
 
   // --- 2. ฟังก์ชันหลัก: สมัครสมาชิก (handleSignUp) ---
   const handleSignUp = async (e) => {
@@ -64,13 +86,15 @@ const AuthPage = () => {
       );
       const user = userCredential.user;
 
-      await saveUserToFirestore(user, "patient");
+      // *** บันทึก Role ที่ผู้ใช้เลือก ***
+      await saveUserToFirestore(user, selectedRole);
 
-      alert("สมัครสมาชิกสำเร็จ! กรุณาล็อกอิน");
+      alert(`สมัครเป็น ${selectedRole} สำเร็จ! กรุณาล็อกอิน`);
       setIsLogin(true);
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      setSelectedRole("patient");
     } catch (err) {
       console.error("Sign Up Error:", err.code);
       if (err.code === "auth/email-already-in-use") {
@@ -97,7 +121,9 @@ const AuthPage = () => {
         password
       );
       const user = userCredential.user;
-      await saveUserToFirestore(user, "patient");
+
+      // เรียกใช้โดยไม่ส่งค่า Role (เพื่อให้ดึง Role เดิม)
+      await saveUserToFirestore(user);
 
       console.log("Login Successful, User:", user.email);
     } catch (err) {
@@ -116,7 +142,9 @@ const AuthPage = () => {
     try {
       const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
-      await saveUserToFirestore(user, "patient");
+
+      // เรียกใช้โดยไม่ส่งค่า Role (เพื่อให้ดึง Role เดิม)
+      await saveUserToFirestore(user);
 
       console.log("Google Login Successful, User:", user.email);
     } catch (err) {
@@ -132,7 +160,27 @@ const AuthPage = () => {
     setError(`กรุณาตั้งค่า ${platform} Provider ใน Firebase Console`);
   };
 
-  // ส่วนของฟังก์ชัน AuthPage
+  // --- Component ย่อยสำหรับปุ่มเลือก Role (ย้ายมาที่นี่) ---
+  const RoleOption = ({
+    icon: Icon,
+    title,
+    role,
+    selected,
+    onSelect,
+    color,
+  }) => (
+    <button
+      onClick={() => onSelect(role)}
+      className="role-option-button"
+      style={{
+        border: `2px solid ${selected ? color : "#ccc"}`,
+        backgroundColor: selected ? `${color}15` : "white",
+      }}
+    >
+      <Icon size={25} color={color} />
+      <p className="role-title">{title}</p>
+    </button>
+  );
 
   return (
     <div className="login-page">
@@ -144,18 +192,18 @@ const AuthPage = () => {
       {/* เราใช้ login-form-card เป็น Container หลักที่ไม่ขยับ */}
       <div className="login-form-card">
         {showForgot ? (
-          // A. ถ้า showForgot เป็น true ให้แสดงหน้า Forgot Password
+          // 1. หน้า Forgot Password
           <ForgotPassword onBackToLogin={() => setShowForgot(false)} />
         ) : (
-          // B. ถ้า showForgot เป็น false ให้แสดงหน้า Login / Sign Up ปกติ
           <>
-            {" "}
-            {/* ใช้ Fragment เพื่อรวม Element หลายตัวเข้าด้วยกัน */}
-            {/* แถบ Log in / Sign Up */}
+            {/* --- แถบ Log in / Sign Up --- */}
             <div className="tab-buttons-container">
               <button
                 className={`tab-button ${isLogin ? "active" : "inactive"}`}
-                onClick={() => setIsLogin(true)}
+                onClick={() => {
+                  setIsLogin(true);
+                  setError("");
+                }}
                 disabled={loading}
               >
                 Log in
@@ -163,7 +211,7 @@ const AuthPage = () => {
               <button
                 className={`tab-button ${!isLogin ? "active" : "inactive"}`}
                 onClick={() => {
-                  setIsLogin(false);
+                  setIsLogin(false); // เปลี่ยนไปแสดงหน้า Sign Up
                   setError("");
                   setEmail("");
                   setPassword("");
@@ -174,102 +222,177 @@ const AuthPage = () => {
                 Sign Up
               </button>
             </div>
-            {/* Form: Login / Sign Up */}
-            <form
-              onSubmit={isLogin ? handleLogin : handleSignUp}
-              className="form-fields"
-            >
-              {/* ... Input Fields และ Logic ทั้งหมดของ Login/Sign Up ... */}
 
-              <div className="input-group">
-                <FaUser className="input-icon" />
-                <input
-                  type="email"
-                  placeholder="Email (ใช้แทน Username)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="input-field"
-                  disabled={loading}
-                />
-              </div>
-              <div className="input-group">
-                <FaLock className="input-icon" />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="input-field"
-                  disabled={loading}
-                />
-              </div>
-
-              {!isLogin && (
+            {isLogin ? (
+              // --- 3. หน้า Login ปกติ ---
+              <form onSubmit={handleLogin} className="form-fields">
+                {/* Input Fields Login */}
                 <div className="input-group">
-                  <FaLock className="input-icon" />
+                  <FaUser className="input-icon" />
                   <input
-                    type="password"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    type="email"
+                    placeholder="Email (ใช้แทน Username)"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="input-field"
                     disabled={loading}
                   />
                 </div>
-              )}
+                <div className="input-group">
+                  <FaLock className="input-icon" />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="input-field"
+                    disabled={loading}
+                  />
+                </div>
 
-              {/* ลืมรหัสผ่าน / ปุ่มหลัก */}
-              {isLogin && (
                 <div className="forgot-password">
                   <a
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      setShowForgot(true); // เปลี่ยน State
+                      setShowForgot(true);
                     }}
                   >
                     Forgot password
                   </a>
                 </div>
-              )}
 
-              <button
-                type="submit"
-                className="login-main-button"
-                disabled={loading}
-              >
-                {loading ? "กำลังดำเนินการ..." : isLogin ? "Log in" : "Sign Up"}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className="login-main-button"
+                  disabled={loading}
+                >
+                  {loading ? "กำลังดำเนินการ..." : "Log in"}
+                </button>
+              </form>
+            ) : (
+              // --- 2. หน้า Sign Up (Role Selector + Form) ---
+              <>
+                {/* ***** ส่วน Role Selector ***** */}
+                <p className="signup-subtitle">
+                  โปรดเลือกบทบาทที่คุณต้องการสมัคร:
+                </p>
+
+                <div
+                  className="role-options-container"
+                  style={{ marginBottom: "20px" }}
+                >
+                  <RoleOption
+                    icon={FaUser}
+                    title="คนไข้"
+                    role="patient"
+                    selected={selectedRole === "patient"}
+                    onSelect={setSelectedRole}
+                    color="#668ee0"
+                  />
+                  <RoleOption
+                    icon={FaUserMd}
+                    title="แพทย์"
+                    role="doctor"
+                    selected={selectedRole === "doctor"}
+                    onSelect={setSelectedRole}
+                    color="#28a745"
+                  />
+                  <RoleOption
+                    icon={FaUserTie}
+                    title="แอดมิน"
+                    role="admin"
+                    selected={selectedRole === "admin"}
+                    onSelect={setSelectedRole}
+                    color="#e6b800"
+                  />
+                </div>
+                {/* ***** สิ้นสุดส่วน Role Selector ***** */}
+
+                <form onSubmit={handleSignUp} className="form-fields">
+                  {/* Input Fields Sign Up */}
+                  <div className="input-group">
+                    <FaUser className="input-icon" />
+                    <input
+                      type="email"
+                      placeholder="Email (ใช้แทน Username)"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="input-field"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <FaLock className="input-icon" />
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="input-field"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <FaLock className="input-icon" />
+                    <input
+                      type="password"
+                      placeholder="Confirm Password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="input-field"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="login-main-button"
+                    disabled={loading}
+                  >
+                    {loading ? "กำลังสร้างบัญชี..." : "สร้างบัญชี"}
+                  </button>
+                </form>
+              </>
+            )}
+
             {error && <p className="error-message">{error}</p>}
-            <div className="separator">or</div>
-            <div className="social-logins">
-              {/* ... Social Login Buttons ... */}
-              <button
-                onClick={() => handleSocialLogin("Facebook")}
-                className="social-button facebook"
-                disabled={loading}
-              >
-                <FaFacebookF size={20} />
-              </button>
-              <button
-                onClick={handleGoogleLogin}
-                className="social-button google"
-                disabled={loading}
-              >
-                <FaGoogle size={20} />
-              </button>
-              <button
-                onClick={() => handleSocialLogin("Line")}
-                className="social-button line"
-                disabled={loading}
-              >
-                <FaLine size={20} />
-              </button>
-            </div>
+
+            {/* Social Logins - แสดงเฉพาะในหน้า Login */}
+            {isLogin && (
+              <>
+                <div className="separator">or</div>
+                <div className="social-logins">
+                  <button
+                    onClick={() => handleSocialLogin("Facebook")}
+                    className="social-button facebook"
+                    disabled={loading}
+                  >
+                    <FaFacebookF size={20} />
+                  </button>
+                  <button
+                    onClick={handleGoogleLogin}
+                    className="social-button google"
+                    disabled={loading}
+                  >
+                    <FaGoogle size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleSocialLogin("Line")}
+                    className="social-button line"
+                    disabled={loading}
+                  >
+                    <FaLine size={20} />
+                  </button>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

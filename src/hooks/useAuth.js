@@ -1,7 +1,29 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // ใช้ getDoc เพื่อความเสถียร
+import { doc, getDoc, setDoc } from 'firebase/firestore'; 
+
+// --- ฟังก์ชัน Helper สำหรับสร้าง/อัปเดต Document (ย้ายมาจาก AuthPage) ---
+const createDefaultProfile = async (user, currentRole = 'patient') => {
+    const userRef = doc(db, 'users', user.uid);
+    try {
+        await setDoc(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            role: currentRole,
+            createdAt: new Date(),
+            lastLogin: new Date(),
+        }, { merge: true });
+        console.log("Profile auto-created by Hook for UID:", user.uid);
+        // คืนค่าข้อมูลโปรไฟล์ที่สร้างขึ้นมา
+        return { uid: user.uid, email: user.email, displayName: user.displayName || user.email.split('@')[0], role: currentRole, createdAt: new Date() };
+    } catch (error) {
+        console.error("Error auto-creating profile in useAuth:", error);
+        return null;
+    }
+}
+
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -20,28 +42,35 @@ const useAuth = () => {
     return () => unsubscribeAuth();
   }, []);
 
-  // useEffect 2: ดึง Role จาก Firestore (ปรับปรุงการดึงข้อมูลแบบ One-time)
+
+  // useEffect 2: ดึง Role จาก Firestore และสร้างใหม่อัตโนมัติถ้าไม่พบ
   useEffect(() => {
     const fetchUserRole = async (uid) => {
       try {
         const userRef = doc(db, 'users', uid);
-        const docSnap = await getDoc(userRef); // ใช้ getDoc เพื่อความเสถียร
+        const docSnap = await getDoc(userRef); 
 
         if (docSnap.exists()) {
           // หากพบโปรไฟล์: บันทึกข้อมูลและ Role
-          setUserProfile({ uid: docSnap.id, ...docSnap.data() });
+          const profileData = docSnap.data();
+          setUserProfile({ uid: docSnap.id, ...profileData });
         } else {
-          // หากไม่พบ Document (เช่น บัญชีเก่าที่ไม่มีโปรไฟล์):
-          setUserProfile(null);
-          console.warn("User profile not found in Firestore. Please create a new one.");
-          // *** ไม่ต้อง Logout อัตโนมัติ ปล่อยให้ App.jsx แสดงหน้าโหลด และผู้ใช้เลือก Logout เอง ***
+          // *** แก้ไข: หากไม่พบโปรไฟล์ ให้สร้างให้อัตโนมัติเป็น 'patient' (และไม่ต้องเตือน) ***
+          const newProfile = await createDefaultProfile(user, 'patient'); 
+          
+          if (newProfile) {
+              setUserProfile(newProfile);
+              // Note: การสร้างโปรไฟล์อัตโนมัติจะแก้ไขปัญหา User profile not found ได้อย่างถาวร
+          } else {
+              // ถ้าสร้างไม่สำเร็จ (เช่น Security Rules บล็อก Create) ให้ Logout
+              await signOut(auth);
+          }
         }
       } catch (error) {
-        console.error("Firestore Fetch Role Error (Code: " + error.code + "): " + error.message);
+        console.error("Firestore Fetch Role Error (Fatal):", error.message);
         setUserProfile(null);
         
-        // *** จัดการ Error 400 (Bad Request) โดยการบังคับ Logout ***
-        // ถ้าเป็น 'permission-denied' หรือ 'unavailable' (มักเป็น 400) ให้ทำการ signOut เพื่อหยุดการเชื่อมต่อที่ล้มเหลว
+        // หากเกิด Error ด้านสิทธิ์การเข้าถึง (Error 400) ให้บังคับ Logout
         if (error.code === 'permission-denied' || error.code === 'unavailable') {
              await signOut(auth); 
         }
@@ -49,14 +78,10 @@ const useAuth = () => {
     };
 
     if (user && user.uid) { 
-        // ถ้ามี user ล็อกอินอยู่ ให้เริ่มดึง Role
         fetchUserRole(user.uid);
     } else {
-        // เมื่อ Logout หรือ user เป็น null
         setUserProfile(null);
     }
-    
-    // ไม่มี Listener ที่ต้องยกเลิกในการใช้ getDoc
   }, [user]); 
 
   // ฟังก์ชัน Logout ที่ใช้ใน Dashboard
