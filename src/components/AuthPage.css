@@ -234,3 +234,52 @@
       font-size: 0.875rem;
       margin-top: 0.75rem;
   }
+  /* src/components/AuthPage.css - เพิ่มส่วนนี้สำหรับ RoleSelectorSignUp */
+
+.signup-title {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.signup-subtitle {
+    text-align: center;
+    margin-bottom: 30px; /* เพิ่มระยะห่างด้านล่าง */
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.role-options-container {
+    display: flex;
+    gap: 15px; /* ลดช่องว่างระหว่างปุ่ม */
+    justify-content: center;
+    margin-bottom: 30px; /* เพิ่มระยะห่างด้านล่างก่อนถึงฟอร์ม */
+}
+
+/* สไตล์สำหรับปุ่มเลือก Role (RoleOption) */
+.role-option-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 110px; /* กำหนดความกว้างคงที่ */
+    height: 110px; /* กำหนดความสูงคงที่ */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08); /* เพิ่ม Shadow เล็กน้อย */
+}
+
+.role-option-button:hover {
+    transform: translateY(-2px); /* เอฟเฟกต์ยกขึ้นเมื่อชี้ */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.role-title {
+    margin-top: 8px; /* ระยะห่างจาก Icon */
+    font-weight: bold;
+    color: #333;
+    font-size: 0.9rem;
+}

@@ -14,6 +14,7 @@ import {
 } from "../firebase";
 import "./AuthPage.css";
 import ForgotPassword from "./ForgotPassword"; // Component ลืมรหัสผ่าน
+import RoleSelectorSignUp from "./RoleSelectorSignUp";
 
 // --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี ---
 const saveUserToFirestore = async (user, role = "patient") => {
