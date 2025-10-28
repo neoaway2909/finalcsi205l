@@ -3,7 +3,7 @@ import {
     getAuth, 
     signInAnonymously, 
     signInWithCustomToken, 
-    onAuthStateChanged, // <--- ถูกเพิ่มเข้ามา
+    onAuthStateChanged, 
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
     GoogleAuthProvider, 
@@ -25,7 +25,7 @@ import {
     serverTimestamp 
 } from "firebase/firestore";
 
-// *** กรุณาแทนที่ YOUR_... ด้วยค่า Configuration จริงของคุณ ***
+//key firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyCazx0ElnoK80wBGYfURF3yBsDrutAwjCI",
     authDomain: "finalcsi205.firebaseapp.com",
@@ -59,7 +59,7 @@ export {
     onSnapshot,
     addDoc,
     serverTimestamp,
-    onAuthStateChanged, // <--- ถูก Export แล้ว
+    onAuthStateChanged, 
     signInAnonymously, 
     signInWithCustomToken 
 };

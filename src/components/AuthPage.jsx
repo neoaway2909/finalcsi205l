@@ -13,15 +13,15 @@ import {
   auth,
   db,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, // ใช้สำหรับ Sign Up
+  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   setDoc,
   doc,
-  getDoc, // เพิ่ม getDoc
+  getDoc,
 } from "../firebase";
 import "./AuthPage.css";
-import ForgotPassword from "./ForgotPassword"; // Component ลืมรหัสผ่าน
+import ForgotPassword from "./ForgotPassword";
 
 // --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี (แก้ไข Logic คงค่า Role) ---
 const saveUserToFirestore = async (user, newRole = null) => {
