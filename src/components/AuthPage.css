@@ -53,7 +53,7 @@
     color: #f9f7f7;
     text-align: center;
     margin-bottom: 0%;
-    margin-top: 70px;
+    margin-top: 40px;
   }
   
   .logo-subtitle {
@@ -70,7 +70,7 @@
     position: relative; 
     z-index: 10; 
     padding: 30px; /* Padding ด้านใน Card */
-    padding-top: 70px; /* ชดเชยให้ Card อยู่ต่ำลงมาทับส่วนโค้ง */
+    padding-top: 50px; /* ชดเชยให้ Card อยู่ต่ำลงมาทับส่วนโค้ง */
     
     width: 90%; /* ให้ใช้ 90% ของหน้าจอในจอเล็ก */
     max-width: var(--max-content-width); /* จำกัดความกว้างสูงสุด */
@@ -81,7 +81,7 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     
     /* ปรับตำแหน่งให้อยู่ตรงกลางของพื้นที่ที่เหลือ */
-    margin-top: 220px; /* ปรับระยะห่างจากด้านบน (Header Curve) */
+    margin-top: 160px; /* ปรับระยะห่างจากด้านบน (Header Curve) */
     
   }
   
