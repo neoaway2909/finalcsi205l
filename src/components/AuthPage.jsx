@@ -19,41 +19,55 @@ import {
   setDoc,
   doc,
   getDoc,
+  signOut, // ต้อง Import signOut เพื่อใช้ในการแก้ไข Race Condition
 } from "../firebase";
 import "./AuthPage.css";
 import ForgotPassword from "./ForgotPassword";
 
-// --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี (แก้ไข Logic คงค่า Role) ---
+// --- 1. ฟังก์ชัน Firestore: บันทึกข้อมูลบัญชี (แก้ไข Logic บังคับใช้ Role ใหม่) ---
 const saveUserToFirestore = async (user, newRole = null) => {
   const userRef = doc(db, "users", user.uid);
-  let currentRole = newRole || "patient";
 
-  try {
-    const docSnap = await getDoc(userRef);
+  // *** Logic ที่ถูกแก้ไข: แยก Path การ Sign Up และ Log In ออกจากกัน ***
 
-    if (docSnap.exists()) {
-      currentRole = docSnap.data().role; // ใช้ Role เดิมที่บันทึกไว้
-    } else {
-      currentRole = newRole || "patient";
-    }
-
+  // Path 1: Sign Up (newRole มีค่า)
+  if (newRole) {
+    // **บังคับเขียนทับ Role ที่เลือก** โดยไม่สนใจว่า useAuth.js สร้าง doc ชั่วคราวไว้หรือไม่
     await setDoc(
       userRef,
       {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || user.email.split("@")[0],
-        role: currentRole,
-        createdAt: docSnap.exists() ? docSnap.data().createdAt : new Date(),
+        role: newRole, // <-- ใช้ Role ที่ถูกเลือก (doctor/admin)
+        createdAt: new Date(),
         lastLogin: new Date(),
       },
       { merge: true }
     );
-    console.log(`User data saved/updated. Role: ${currentRole}`);
-    return currentRole;
+    console.log(`User data saved/updated. Role: ${newRole} (New Registration)`);
+    return newRole;
+  }
+
+  // Path 2: Log In (newRole ไม่มีค่า)
+  try {
+    const docSnap = await getDoc(userRef);
+
+    if (docSnap.exists()) {
+      const currentRole = docSnap.data().role;
+
+      // อัปเดตเฉพาะเวลา Login โดยไม่เขียนทับ Role
+      await setDoc(userRef, { lastLogin: new Date() }, { merge: true });
+      console.log(`User data updated on login. Role: ${currentRole}`);
+      return currentRole;
+    } else {
+      // ควรถูกจัดการใน useAuth.js แต่ถ้ามาถึงตรงนี้ให้ fallback เป็น patient
+      console.error("Profile missing on login.");
+      return "patient";
+    }
   } catch (error) {
-    console.error("Error writing document to Firestore: ", error);
-    return currentRole;
+    console.error("Error reading profile on login:", error);
+    return "patient";
   }
 };
 
@@ -86,8 +100,13 @@ const AuthPage = () => {
       );
       const user = userCredential.user;
 
-      // *** บันทึก Role ที่ผู้ใช้เลือก ***
+      // *** 1. บันทึก Role ที่ผู้ใช้เลือก (Doctor) โดยส่ง selectedRole เข้าไป ***
+      // Logic ใน saveUserToFirestore จะจัดการให้ใช้ Role ที่ถูกต้องนี้
       await saveUserToFirestore(user, selectedRole);
+
+      // *** 2. Sign Out ทันทีเพื่อยุติ Race Condition ***
+      // สิ่งนี้สำคัญที่สุดเพื่อไม่ให้ useAuth.js เข้ามาแทรกแซงและกำหนด role เป็น patient
+      await signOut(auth);
 
       alert(`สมัครเป็น ${selectedRole} สำเร็จ! กรุณาล็อกอิน`);
       setIsLogin(true);
@@ -122,7 +141,8 @@ const AuthPage = () => {
       );
       const user = userCredential.user;
 
-      // เรียกใช้โดยไม่ส่งค่า Role (เพื่อให้ดึง Role เดิม)
+      // เรียกใช้โดยไม่ส่งค่า Role (เพื่อให้ดึง Role เดิมที่บันทึกไว้ใน Firestore)
+      // Logic ใน saveUserToFirestore จะรู้ว่าเป็น Log In และจะรักษา Role เดิมไว้
       await saveUserToFirestore(user);
 
       console.log("Login Successful, User:", user.email);
@@ -148,7 +168,7 @@ const AuthPage = () => {
 
       console.log("Google Login Successful, User:", user.email);
     } catch (err) {
-      console.error("Google Login Error:", err);
+      console.error("Login Error:", err);
       setError("เกิดข้อผิดพลาดในการล็อกอินด้วย Google");
     } finally {
       setLoading(false);
