@@ -28,8 +28,6 @@ import ForgotPassword from "./ForgotPassword";
 const saveUserToFirestore = async (user, newRole = null) => {
   const userRef = doc(db, "users", user.uid);
 
-  // *** Logic ที่ถูกแก้ไข: แยก Path การ Sign Up และ Log In ออกจากกัน ***
-
   // Path 1: Sign Up (newRole มีค่า)
   if (newRole) {
     // **บังคับเขียนทับ Role ที่เลือก** โดยไม่สนใจว่า useAuth.js สร้าง doc ชั่วคราวไว้หรือไม่
