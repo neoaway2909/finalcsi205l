@@ -1,337 +1,818 @@
-/* --- src/components/Dashboards.css - โค้ดสำหรับ Layout 2 คอลัมน์ --- */
+/* --- src/components/Dashboards.css - REFACTORED for New Design --- */
+
+
 
 :root {
-    --primary-color: #668ee0; /* สีน้ำเงินหลัก */
-    --background-gray: #f7f7f7;
-    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  --primary-color: #668ee0; /* สีน้ำเงินหลัก (จาก Logo) */
+
+  --background-blue-light: #e6f0ff; /* พื้นหลังสีฟ้าอ่อน */
+
+  --card-blue-bg: #f5f8fd; /* สีพื้นหลังการ์ด (ฟ้าอ่อนมาก) */
+
+  --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  --border-color-light: #e0e8f3;
+
 }
 
+
+
 /* -------------------------------------- */
-/* 1. LAYOUT GRID (2 COLUMNS) */
+
+/* 1. GLOBAL & LAYOUT */
+
 /* -------------------------------------- */
+
+
+
+/* ตั้งค่าพื้นหลังสีฟ้าให้กับ body */
+
+body {
+
+  background-color: var(--background-blue-light);
+
+  font-family: 'Inter', sans-serif;
+
+  margin: 0;
+
+}
+
+
 
 .full-dashboard-layout {
-    display: grid;
-    /* Side Nav (220px) | Main Content (พื้นที่ที่เหลือ) */
-    grid-template-columns: 220px 1fr; 
-    min-height: 100vh;
-    background-color: var(--background-gray);
-    font-family: 'Inter', sans-serif;
+
+  display: grid;
+
+  /* 2 แถว: แถวบน (auto) / แถวล่าง (เนื้อหา) */
+
+  grid-template-rows: auto 1fr; 
+
+  /* 2 คอลัมน์: Logo (auto) / Header (ที่เหลือ) */
+
+  grid-template-columns: auto 1fr;
+
+  grid-template-areas:
+
+    "logo header"
+
+    "main main";
+
+  min-height: 100vh;
+
+  background-color: var(--background-blue-light);
+
+  /* ระยะห่างจากขอบจอ */
+
+  padding: 25px; 
+
+  box-sizing: border-box;
+
+  /* ช่องว่างระหว่าง Logo/Header และกล่องเนื้อหา */
+
+  gap: 20px; 
+
 }
 
-/* -------------------------------------- */
-/* 2. SIDE NAVIGATION BAR */
-/* -------------------------------------- */
-
-.side-nav {
-    background-color: white;
-    padding: 30px 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05); /* Shadow ด้านขวา */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: fixed; /* ตรึง Side Nav ไว้ */
-    height: 100vh;
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 50px;
-    padding: 0 15px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 1rem;
-}
-
-.app-logo-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    background-color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-}
-
-.app-logo-text {
-    font-weight: bold;
-    color: #333;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.nav-menu {
-    width: 100%;
-    flex-grow: 1;
-}
-
-.nav-item-side {
-    display: flex;
-    align-items: center;
-    padding: 12px 30px;
-    margin: 8px 0;
-    cursor: pointer;
-    color: #666;
-    transition: all 0.2s ease;
-}
-
-.nav-item-side span {
-    margin-left: 15px;
-    font-weight: 500;
-}
-
-.nav-item-side:hover {
-    color: var(--primary-color);
-}
-
-.nav-item-side.active {
-    background-color: var(--background-gray);
-    color: var(--primary-color);
-    /* สร้างแถบสีน้ำเงินทางซ้าย */
-    border-left: 4px solid var(--primary-color); 
-    padding-left: 26px; 
-}
-.nav-item-side.active svg {
-    fill: var(--primary-color);
-}
-
-.nav-item-side.logout {
-    margin-top: 50px; 
-    color: #d9534f;
-    border-left: 4px solid transparent;
-}
 
 
 /* -------------------------------------- */
-/* 3. MAIN CONTENT AREA */
+
+/* 1A. LOGO (Area 'logo') */
+
 /* -------------------------------------- */
 
-.main-content-area {
-    /* ชดเชยพื้นที่ให้กับ Side Nav ที่เป็น fixed */
-    margin-left: 220px; 
-    padding: 30px 40px;
-    padding-top: 20px;
-    background-color: var(--background-gray);
+.logo-container-main {
+
+  grid-area: logo;
+
+  display: flex;
+
+  align-items: center;
+
+  padding-left: 15px; /* เพิ่มระยะห่างซ้ายเล็กน้อย */
+
 }
 
-/* --- Top Header Bar (Search & User Info) --- */
+
+
+.logo-container-main .app-logo-icon {
+
+  width: 60px;
+
+  height: 60px;
+
+  border-radius: 15px;
+
+  background-color: var(--primary-color);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-right: 15px;
+
+  box-shadow: 0 4px 10px rgba(102, 142, 224, 0.5);
+
+}
+
+
+
+.logo-container-main .app-logo-text {
+
+  font-weight: bold;
+
+  color: #333;
+
+  font-size: 1.25rem;
+
+  margin: 0;
+
+}
+
+
+
+/* -------------------------------------- */
+
+/* 1B. TOP HEADER BAR (Area 'header') */
+
+/* -------------------------------------- */
+
 .top-header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    padding: 10px 0;
-    margin-bottom: 20px;
+
+  grid-area: header;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end; /* จัดชิดขวา */
+
+  padding-right: 15px;
+
 }
+
+
 
 .search-bar-header {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    flex-grow: 1;
-    max-width: 600px; /* จำกัดความกว้าง */
-    padding: 10px 20px;
-    border-radius: 12px; /* ใช้ Rounded Corners */
-    box-shadow: var(--box-shadow);
-    border: 1px solid #ddd;
-    margin-right: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  background-color: white;
+
+  flex-grow: 1; 
+
+  max-width: 500px;
+
+  padding: 12px 20px;
+
+  border-radius: 12px;
+
+  box-shadow: var(--box-shadow-light);
+
+  border: 1px solid white;
+
 }
+
+
 
 .search-bar-header input {
-    border: none;
-    background: transparent;
-    font-size: 1rem;
-    outline: none;
-    padding: 5px 0;
-    width: 100%;
+
+  border: none;
+
+  background: transparent;
+
+  font-size: 0.95rem;
+
+  outline: none;
+
+  width: 100%;
+
 }
+
+
+
+/* ไอคอน Bell */
+
+.header-icon-wrapper {
+
+  background-color: white;
+
+  border-radius: 50%;
+
+  width: 45px;
+
+  height: 45px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0 20px;
+
+  box-shadow: var(--box-shadow-light);
+
+  cursor: pointer;
+
+}
+
+
+
+/* ไอคอน User */
 
 .profile-header-sm {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  background-color: white;
+
+  border-radius: 25px;
+
+  padding: 5px 15px 5px 8px; /* ระยะห่างข้างใน */
+
+  box-shadow: var(--box-shadow-light);
+
+  cursor: pointer;
+
 }
+
+
 
 .user-icon-sm {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 10px;
-    border: 2px solid var(--primary-color);
+
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 50%;
+
+  background-color: #eee;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-right: 10px;
+
 }
+
+
 
 .user-info-sm {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
+
+  display: flex;
+
+  flex-direction: column;
+
+  text-align: left;
+
 }
+
+
 
 .user-info-sm .name {
-    font-weight: bold;
-    font-size: 1rem;
-    color: #333;
+
+  font-weight: 600;
+
+  font-size: 0.9rem;
+
+  color: #333;
+
 }
 
+
+
 .user-info-sm .id-card {
-    font-size: 0.8rem;
-    color: #999;
+
+  font-size: 0.75rem;
+
+  color: #999;
+
 }
+
+
+
+/* -------------------------------------- */
+
+/* 1C. CONTENT CONTAINER (Area 'main') */
+
+/* -------------------------------------- */
+
+.content-container {
+
+  grid-area: main;
+
+  background-color: white;
+
+  border-radius: 25px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+
+  display: grid;
+
+  /* คอลัมน์สำหรับ SideNav | เนื้อหา */
+
+  grid-template-columns: 100px 1fr; 
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  overflow: hidden; /* ป้องกันเนื้อหาล้น */
+
+  /* ความสูงที่เหลือ (100vh - padding บนล่าง - gap - ความสูงแถวบน) */
+
+  height: calc(100vh - 50px - 20px - 70px); 
+
+}
+
+
+
+/* -------------------------------------- */
+
+/* 2. SIDE NAVIGATION (Icon-Only) */
+
+/* -------------------------------------- */
+
+
+
+.side-nav {
+
+  padding: 10px 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  /* เส้นกั้นด้านขวา */
+
+  border-right: 1px solid #f0f0f0; 
+
+}
+
+
+
+.nav-menu {
+
+  width: 100%;
+
+  flex-grow: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-top: 20px;
+
+}
+
+
+
+.nav-item-side {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0;
+
+  margin: 12px 0;
+
+  cursor: pointer;
+
+  color: #888; /* สีไอคอนปกติ */
+
+  transition: all 0.2s ease;
+
+  border-radius: 15px;
+
+  width: 55px;
+
+  height: 55px;
+
+}
+
+
+
+.nav-item-side span {
+
+  display: none; /* ซ่อน Text */
+
+}
+
+
+
+.nav-item-side:hover {
+
+  color: var(--primary-color);
+
+  background-color: var(--card-blue-bg);
+
+}
+
+
+
+.nav-item-side.active {
+
+  background-color: var(--primary-color);
+
+  color: white;
+
+  box-shadow: 0 4px 10px rgba(102, 142, 224, 0.4);
+
+}
+
+.nav-item-side.active svg {
+
+  fill: white;
+
+}
+
+
+
+/* -------------------------------------- */
+
+/* 3. MAIN CONTENT AREA (Scrollable) */
+
+/* -------------------------------------- */
+
+
+
+.main-content-area {
+
+  margin-left: 0;
+
+  padding: 0px 30px;
+
+  background-color: white;
+
+  /* ทำให้เนื้อหาส่วนนี้ scroll ได้ */
+
+  overflow-y: auto; 
+
+  overflow-x: hidden;
+
+}
+
+
 
 /* --- Content Body --- */
 
-.main-banner-content {
-    background-color: #e0f0ff; 
-    height: 200px;
-    margin: 15px 0;
-    border-radius: 12px;
-    border: 1px solid var(--primary-color);
+.content-body {
+
+  padding-top: 10px;
+
 }
 
-/* --- Action Icons Row (Ask AI, Pharmacy, Vaccinated) --- */
+
+
+/* แบนเนอร์ */
+
+.main-banner-content {
+
+  background-color: var(--card-blue-bg);
+
+  height: 180px;
+
+  margin: 0 0 25px 0;
+
+  border-radius: 20px;
+
+  border: 1px solid var(--border-color-light);
+
+}
+
+
+
+/* ปุ่ม Action 3 ปุ่ม */
 
 .action-icons-row-large {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin: 30px 0;
+
+  display: flex;
+
+  justify-content: center; /* <--- ตัวนี้ครับ (จัดกลาง) */
+
+  gap: 25px;
+
+  margin: 25px 0;
+
 }
+
+
 
 .action-button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 15px;
-    width: 100%;
-    border-radius: 12px;
-    background-color: white;
-    box-shadow: var(--box-shadow);
-    border: 1px solid #eee;
-    cursor: pointer;
-    transition: transform 0.1s;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  padding: 20px;
+
+  width: 33%;
+
+  border-radius: 20px;
+
+  background-color: var(--card-blue-bg);
+
+  box-shadow: none;
+
+  border: 1px solid var(--border-color-light);
+
+  cursor: pointer;
+
+  transition: transform 0.2s, box-shadow 0.2s;
+
 }
+
 .action-button-container:hover {
-    transform: translateY(-2px);
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 6px 15px rgba(102, 142, 224, 0.1);
+
 }
+
+
 
 .action-button-container .action-button {
-    background-color: transparent;
-    padding: 0;
-    box-shadow: none;
-    border: none;
-    margin-bottom: 10px;
+
+  background-color: transparent;
+
+  padding: 0;
+
+  box-shadow: none;
+
+  border: none;
+
+  margin-bottom: 10px;
+
 }
+
+
 
 .action-button-container .label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #333;
+
+  font-size: 0.9rem;
+
+  font-weight: 500;
+
+  color: #333;
+
 }
 
-/* --- Tab Selector (Instant/Book) --- */
+
+
+/* --- Tab Selector --- */
+
 .tab-selector {
-    display: flex;
-    justify-content: flex-start;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 20px;
+
+  display: flex;
+
+  justify-content: center; /* จัดกลางตามแบบ */
+
+  border-bottom: 2px solid #f0f0f0;
+
+  margin-bottom: 25px;
+
+  gap: 40px; /* เพิ่มช่องว่างระหว่าง Tab */
+
 }
+
+
 
 .tab-selector span {
-    padding: 10px 0;
-    margin-right: 30px;
-    font-size: 1.0rem;
-    font-weight: 600;
-    cursor: pointer;
+
+  padding: 10px 0;
+
+  margin-right: 0; /* ลบ margin เดิม */
+
+  font-size: 1.0rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
 }
+
+
 
 .active-tab {
-    color: var(--primary-color);
-    border-bottom: 3px solid var(--primary-color);
-    margin-bottom: -2px; 
+
+  color: var(--primary-color);
+
+  border-bottom: 3px solid var(--primary-color);
+
+  margin-bottom: -2px;
+
 }
+
+
 
 .inactive-tab {
-    color: #999;
+
+  color: #999;
+
 }
 
-/* --- Doctor List Cards (ใช้สไตล์เดิม) --- */
+
+
+/* --- Doctor List Cards --- */
+
 .doctor-list {
-    padding-bottom: 50px;
+
+  padding-bottom: 50px;
+
 }
+
+
 
 .doctor-card {
-    display: flex;
-    align-items: flex-start;
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: var(--box-shadow);
-    margin-bottom: 15px;
-    border: 1px solid #e0f0ff; 
+
+  display: flex;
+
+  align-items: flex-start;
+
+  background-color: var(--card-blue-bg);
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  box-shadow: none;
+
+  margin-bottom: 15px;
+
+  border: 1px solid var(--border-color-light);
+
 }
+
+
 
 .doctor-card .profile-icon {
-    background-color: #f0f0f0;
-    padding: 15px;
-    border-radius: 50%;
-    margin-right: 15px;
-    flex-shrink: 0;
+
+  background-color: #e0e8f3;
+
+  padding: 15px;
+
+  border-radius: 50%;
+
+  margin-right: 15px;
+
+  flex-shrink: 0;
+
 }
+
 .doctor-card .info-section {
-    flex-grow: 1;
+
+  flex-grow: 1;
+
 }
+
+
 
 .info-section .name {
-    font-weight: bold;
-    font-size: 1rem;
-    margin: 0 0 5px 0;
+
+  font-weight: bold;
+
+  font-size: 1rem;
+
+  margin: 0 0 5px 0;
+
 }
-/* ... (เพิ่มสไตล์สำหรับ .specialty, .details, .accredited, .price-section ฯลฯ ตามที่สร้างไว้ก่อนหน้า) ... */
+
 .info-section .specialty {
-    background-color: #d8f0f0;
-    color: #007bff;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: inline-block;
+
+  background-color: #d8f0f0;
+
+  color: #007bff;
+
+  padding: 2px 8px;
+
+  border-radius: 10px;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+
+  margin-bottom: 5px;
+
+  display: inline-block;
+
 }
+
+
 
 .info-section .details {
-    font-size: 0.9rem;
-    color: #666;
-    margin: 3px 0;
+
+  font-size: 0.9rem;
+
+  color: #666;
+
+  margin: 3px 0;
+
 }
+
+
 
 .info-section .accredited {
-    font-size: 0.8rem;
-    color: var(--primary-color);
-    margin-top: 10px;
-    border-top: 1px dashed #eee;
-    padding-top: 5px;
+
+  font-size: 0.8rem;
+
+  color: var(--primary-color);
+
+  margin-top: 10px;
+
+  border-top: 1px dashed #cdd7e8;
+
+  padding-top: 5px;
+
 }
+
+
 
 .price-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    flex-shrink: 0;
-    margin-left: 10px;
-    text-align: right;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  justify-content: center; /* จัดให้อยู่กลาง (แนวตั้ง) */
+
+  flex-shrink: 0;
+
+  margin-left: 10px;
+
+  text-align: right;
+
+  height: 100%;
+
 }
+
+
 
 .price-section .price {
-    font-weight: bold;
-    color: #28a745;
-    font-size: 0.95rem;
+
+  font-weight: bold;
+
+  color: #28a745;
+
+  font-size: 0.95rem;
+
 }
 
+
+
 .price-section .time {
-    font-size: 0.8rem;
-    color: #666;
+
+  font-size: 0.8rem;
+
+  color: #666;
+
 }
+/* --- เพิ่ม CSS สำหรับปุ่ม Logout --- */
+
+.nav-item-logout {
+
+  /* คำสั่งนี้จะดันปุ่มนี้ให้ลงไปอยู่ล่างสุด */
+
+  margin-top: auto; 
+
+  /* เปลี่ยนสีไอคอนเป็นสีแดง */
+
+  color: #d9534f; 
+
+  margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่างเล็กน้อย */
+
+}
+
+
+
+.nav-item-logout:hover {
+
+  color: #a94442; /* สีแดงเข้มขึ้นเมื่อ hover */
+
+  background-color: #fdf5f5; /* พื้นหลังสีแดงอ่อน */
+
+}
+
+/* --- จบส่วน Logout --- */
