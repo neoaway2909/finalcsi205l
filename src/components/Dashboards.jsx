@@ -216,7 +216,7 @@ const DashboardCard = ({ title, role, user, logout }) => (
     }}
   >
     <h1 style={{ color: role === "admin" ? "#d9534f" : "#337ab7" }}>{title}</h1>
-    <p>ยินดีต้อน: {user.displayName || user.email}</p>
+    <p>ยินดีต้อนรับ: {user.displayName || user.email}</p>
     <p>
       บทบาทของคุณคือ: <strong>{role.toUpperCase()}</strong>
     </p>
