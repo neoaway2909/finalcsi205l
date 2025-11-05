@@ -72,7 +72,7 @@ const SideNav = ({ logout }) => (
     <nav className="nav-menu">
       <div className="nav-item-side active">
         <FaHome size={20} />
-        <span>Home</span>
+        <span>Homei</span>
       </div>
       <div className="nav-item-side">
         <FaCalendarAlt size={20} />
