@@ -13,7 +13,7 @@ import {
   FaCheck,
   FaListAlt // (เพิ่มไอคอนสำหรับหมอ)
 } from "react-icons/fa";
-import "./Dashboard.css";
+import "./Dashboards.css";
 import LogoImage from "../assets/logo.png";
 import BotIcon from "../assets/ask ai.png";
 // import BannerIllustration from "../assets/your-banner-image.png"; 
