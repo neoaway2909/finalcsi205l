@@ -236,7 +236,72 @@ body {
 }
 .nav-item-side.active svg { fill: var(--primary-color); }
 
+<<<<<<< HEAD:src/components/Dashboard.css
 /* Logout */
+=======
+
+
+.info-section .accredited {
+
+  font-size: 0.8rem;
+
+  color: var(--primary-color);
+
+  margin-top: 10px;
+
+  border-top: 1px dashed #cdd7e8;
+
+  padding-top: 5px;
+
+}
+
+
+
+.price-section {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  justify-content: center; /* จัดให้อยู่กลาง (แนวตั้ง) */
+
+  flex-shrink: 0;
+
+  margin-left: 10px;
+
+  text-align: right;
+
+  height: 100%;
+
+}
+
+
+
+.price-section .price {
+  
+
+  font-weight: bold;
+
+  color: #28a745;
+
+  font-size: 0.95rem;
+
+}
+
+
+
+.price-section .time {
+
+  font-size: 0.8rem;
+
+  color: #666;
+
+}
+/* --- เพิ่ม CSS สำหรับปุ่ม Logout --- */
+
+>>>>>>> 3f3d473572b098ee7d345f834783336de754c94b:src/components/Dashboards.css
 .nav-item-logout {
   margin-top: auto;
   color: #d9534f;
