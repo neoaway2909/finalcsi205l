@@ -1,818 +1,812 @@
-/* --- src/components/Dashboards.css - REFACTORED for New Design --- */
-
-
-
 :root {
-
-  --primary-color: #668ee0; /* สีน้ำเงินหลัก (จาก Logo) */
-
-  --background-blue-light: #e6f0ff; /* พื้นหลังสีฟ้าอ่อน */
-
-  --card-blue-bg: #f5f8fd; /* สีพื้นหลังการ์ด (ฟ้าอ่อนมาก) */
-
-  --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
-
+  --primary-color: #668ee0;
+  --background-blue-light: #e6f0ff;
+  --card-blue-bg: #f5f8fd;
+  --box-shadow-light: 0 4px 12px rgba(0,0,0,0.05);
   --border-color-light: #e0e8f3;
-
 }
 
-
-
-/* -------------------------------------- */
-
-/* 1. GLOBAL & LAYOUT */
-
-/* -------------------------------------- */
-
-
-
-/* ตั้งค่าพื้นหลังสีฟ้าให้กับ body */
-
+/* GLOBAL */
 body {
-
   background-color: var(--background-blue-light);
-
   font-family: 'Inter', sans-serif;
-
   margin: 0;
-
 }
 
-
-
+/* === LAYOUT หลัก === */
 .full-dashboard-layout {
-
   display: grid;
-
-  /* 2 แถว: แถวบน (auto) / แถวล่าง (เนื้อหา) */
-
-  grid-template-rows: auto 1fr; 
-
-  /* 2 คอลัมน์: Logo (auto) / Header (ที่เหลือ) */
-
-  grid-template-columns: auto 1fr;
-
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
   grid-template-areas:
-
-    "logo header"
-
-    "main main";
-
-  min-height: 100vh;
-
-  background-color: var(--background-blue-light);
-
-  /* ระยะห่างจากขอบจอ */
-
-  padding: 25px; 
-
+    "header"
+    "body";
+  height: 100vh;
+  width: 100%;
   box-sizing: border-box;
-
-  /* ช่องว่างระหว่าง Logo/Header และกล่องเนื้อหา */
-
-  gap: 20px; 
-
-}
-
-
-
-/* -------------------------------------- */
-
-/* 1A. LOGO (Area 'logo') */
-
-/* -------------------------------------- */
-
-.logo-container-main {
-
-  grid-area: logo;
-
-  display: flex;
-
-  align-items: center;
-
-  padding-left: 15px; /* เพิ่มระยะห่างซ้ายเล็กน้อย */
-
-}
-
-
-
-.logo-container-main .app-logo-icon {
-
-  width: 60px;
-
-  height: 60px;
-
-  border-radius: 15px;
-
   background-color: var(--primary-color);
+  padding: 0; 
+  gap: 20px;
+}
 
-  display: flex;
+/* === Wrapper === */
+.body-wrapper {
+  grid-area: body;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: "sidenav content";
+  gap: 0px;
+  overflow: hidden;
+  height: 100%;
+}
 
-  align-items: center;
-
-  justify-content: center;
-
-  margin-right: 15px;
-
-  box-shadow: 0 4px 10px rgba(102, 142, 224, 0.5);
-
+.app-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
 }
 
 
-
-.logo-container-main .app-logo-text {
-
-  font-weight: bold;
-
-  color: #333;
-
-  font-size: 1.25rem;
-
-  margin: 0;
-
-}
-
-
-
-/* -------------------------------------- */
-
-/* 1B. TOP HEADER BAR (Area 'header') */
-
-/* -------------------------------------- */
-
+/* HEADER */
 .top-header-bar {
-
-  grid-area: header;
-
+  grid-area: header; 
   display: flex;
-
   align-items: center;
-
-  justify-content: flex-end; /* จัดชิดขวา */
-
-  padding-right: 15px;
-
+  justify-content: space-between;
+  padding: 0 25px;
+  background: var(--primary-color);
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(102,142,224,0.3);
+  height: 85px;
 }
-
-
+.logo-container-header {
+  display: flex;
+  align-items: center;
+}
+.app-logo-header-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 5px;
+  box-sizing: border-box;
+}
 
 .search-bar-header {
-
   display: flex;
-
   align-items: center;
-
-  background-color: white;
-
-  flex-grow: 1; 
-
+  background-color: #E8F0FF;
+  flex-grow: 1;
   max-width: 500px;
-
   padding: 12px 20px;
-
   border-radius: 12px;
-
-  box-shadow: var(--box-shadow-light);
-
-  border: 1px solid white;
-
-}
-
-
-
-.search-bar-header input {
-
   border: none;
-
+}
+.search-bar-header input {
+  border: none;
   background: transparent;
-
   font-size: 0.95rem;
-
   outline: none;
-
   width: 100%;
-
+  color: black;
+}
+.search-bar-header input::placeholder {
+  color: #939393;
+  opacity: 1;
 }
 
-
-
-/* ไอคอน Bell */
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
 .header-icon-wrapper {
-
-  background-color: white;
-
+  background-color: transparent;
   border-radius: 50%;
-
   width: 45px;
-
   height: 45px;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  margin: 0 20px;
-
-  box-shadow: var(--box-shadow-light);
-
+  margin: 0;
   cursor: pointer;
-
+  transition: background-color 0.2s ease;
+}
+.header-icon-wrapper:hover {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
-
-
-/* ไอคอน User */
+.header-icon-wrapper svg {
+  color: #ffffff;
+}
 
 .profile-header-sm {
-
+  position: relative;
   display: flex;
-
   align-items: center;
-
-  background-color: white;
-
+  background-color: transparent;
+  padding: 5px 10px;
   border-radius: 25px;
-
-  padding: 5px 15px 5px 8px; /* ระยะห่างข้างใน */
-
-  box-shadow: var(--box-shadow-light);
-
   cursor: pointer;
-
+  color: #ffffff;
+  transition: background-color 0.2s ease;
 }
-
-
-
-.user-icon-sm {
-
-  width: 38px;
-
-  height: 38px;
-
+.profile-header-sm:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.profile-header-sm .user-icon-sm {
+  background-color: #ffffff;
   border-radius: 50%;
-
-  background-color: #eee;
-
+  width: 45px;
+  height: 45px;
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   margin-right: 10px;
-
 }
-
-
-
+.profile-header-sm .user-icon-sm svg {
+  color: var(--primary-color);
+}
 .user-info-sm {
-
   display: flex;
-
   flex-direction: column;
-
-  text-align: left;
-
+  align-items: flex-start;
+  line-height: 1.3;
 }
-
-
-
 .user-info-sm .name {
-
   font-weight: 600;
-
+  color: #ffffff;
   font-size: 0.9rem;
-
-  color: #333;
-
 }
-
-
-
 .user-info-sm .id-card {
-
-  font-size: 0.75rem;
-
-  color: #999;
-
+  font-size: 0.8rem;
+  color: #e0e8f3;
 }
 
 
-
-/* -------------------------------------- */
-
-/* 1C. CONTENT CONTAINER (Area 'main') */
-
-/* -------------------------------------- */
-
+/* CONTENT CONTAINER */
 .content-container {
-
-  grid-area: main;
-
+  grid-area: content; 
   background-color: white;
-
-  border-radius: 25px;
-
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-
-  display: grid;
-
-  /* คอลัมน์สำหรับ SideNav | เนื้อหา */
-
-  grid-template-columns: 100px 1fr; 
-
+  border-radius: 0px 50px 0 0;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
   padding: 20px;
-
   box-sizing: border-box;
-
-  overflow: hidden; /* ป้องกันเนื้อหาล้น */
-
-  /* ความสูงที่เหลือ (100vh - padding บนล่าง - gap - ความสูงแถวบน) */
-
-  height: calc(100vh - 50px - 20px - 70px); 
-
+  overflow: hidden; 
 }
 
-
-
-/* -------------------------------------- */
-
-/* 2. SIDE NAVIGATION (Icon-Only) */
-
-/* -------------------------------------- */
-
-
-
+/* SIDENAV */
 .side-nav {
-
-  padding: 10px 0;
-
+  grid-area: sidenav; 
+  width: 280px;
+  background-color: #fff;
+  padding: 10px 0 20px 0;
   display: flex;
-
   flex-direction: column;
-
-  align-items: center;
-
-  /* เส้นกั้นด้านขวา */
-
-  border-right: 1px solid #f0f0f0; 
-
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 50px 0px 0 0;
 }
-
-
-
 .nav-menu {
-
   width: 100%;
-
   flex-grow: 1;
-
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   margin-top: 20px;
-
 }
-
-
-
 .nav-item-side {
-
   display: flex;
-
   align-items: center;
-
-  justify-content: center;
-
-  padding: 0;
-
-  margin: 12px 0;
-
+  justify-content: flex-start;
+  padding: 15px 25px;
+  margin: 8px 20px;
   cursor: pointer;
-
-  color: #888; /* สีไอคอนปกติ */
-
+  color: #555e68;
   transition: all 0.2s ease;
-
-  border-radius: 15px;
-
-  width: 55px;
-
-  height: 55px;
-
+  border-radius: 12px;
+  width: calc(100% - 40px);
+  height: auto;
+  box-sizing: border-box;
 }
-
-
-
-.nav-item-side span {
-
-  display: none; /* ซ่อน Text */
-
+.nav-label {
+  margin-left: 15px;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
-
-
 
 .nav-item-side:hover {
-
   color: var(--primary-color);
-
   background-color: var(--card-blue-bg);
-
 }
-
-
-
 .nav-item-side.active {
-
-  background-color: var(--primary-color);
-
-  color: white;
-
-  box-shadow: 0 4px 10px rgba(102, 142, 224, 0.4);
-
-}
-
-.nav-item-side.active svg {
-
-  fill: white;
-
-}
-
-
-
-/* -------------------------------------- */
-
-/* 3. MAIN CONTENT AREA (Scrollable) */
-
-/* -------------------------------------- */
-
-
-
-.main-content-area {
-
-  margin-left: 0;
-
-  padding: 0px 30px;
-
-  background-color: white;
-
-  /* ทำให้เนื้อหาส่วนนี้ scroll ได้ */
-
-  overflow-y: auto; 
-
-  overflow-x: hidden;
-
-}
-
-
-
-/* --- Content Body --- */
-
-.content-body {
-
-  padding-top: 10px;
-
-}
-
-
-
-/* แบนเนอร์ */
-
-.main-banner-content {
-
-  background-color: var(--card-blue-bg);
-
-  height: 180px;
-
-  margin: 0 0 25px 0;
-
-  border-radius: 20px;
-
-  border: 1px solid var(--border-color-light);
-
-}
-
-
-
-/* ปุ่ม Action 3 ปุ่ม */
-
-.action-icons-row-large {
-
-  display: flex;
-
-  justify-content: center; /* <--- ตัวนี้ครับ (จัดกลาง) */
-
-  gap: 25px;
-
-  margin: 25px 0;
-
-}
-
-
-
-.action-button-container {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  padding: 20px;
-
-  width: 33%;
-
-  border-radius: 20px;
-
-  background-color: var(--card-blue-bg);
-
-  box-shadow: none;
-
-  border: 1px solid var(--border-color-light);
-
-  cursor: pointer;
-
-  transition: transform 0.2s, box-shadow 0.2s;
-
-}
-
-.action-button-container:hover {
-
-  transform: translateY(-3px);
-
-  box-shadow: 0 6px 15px rgba(102, 142, 224, 0.1);
-
-}
-
-
-
-.action-button-container .action-button {
-
-  background-color: transparent;
-
-  padding: 0;
-
-  box-shadow: none;
-
-  border: none;
-
-  margin-bottom: 10px;
-
-}
-
-
-
-.action-button-container .label {
-
-  font-size: 0.9rem;
-
-  font-weight: 500;
-
-  color: #333;
-
-}
-
-
-
-/* --- Tab Selector --- */
-
-.tab-selector {
-
-  display: flex;
-
-  justify-content: center; /* จัดกลางตามแบบ */
-
-  border-bottom: 2px solid #f0f0f0;
-
-  margin-bottom: 25px;
-
-  gap: 40px; /* เพิ่มช่องว่างระหว่าง Tab */
-
-}
-
-
-
-.tab-selector span {
-
-  padding: 10px 0;
-
-  margin-right: 0; /* ลบ margin เดิม */
-
-  font-size: 1.0rem;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-}
-
-
-
-.active-tab {
-
+  background-color: var(--background-blue-light);
   color: var(--primary-color);
-
-  border-bottom: 3px solid var(--primary-color);
-
-  margin-bottom: -2px;
-
-}
-
-
-
-.inactive-tab {
-
-  color: #999;
-
-}
-
-
-
-/* --- Doctor List Cards --- */
-
-.doctor-list {
-
-  padding-bottom: 50px;
-
-}
-
-
-
-.doctor-card {
-
-  display: flex;
-
-  align-items: flex-start;
-
-  background-color: var(--card-blue-bg);
-
-  padding: 20px;
-
-  border-radius: 20px;
-
-  box-shadow: none;
-
-  margin-bottom: 15px;
-
-  border: 1px solid var(--border-color-light);
-
-}
-
-
-
-.doctor-card .profile-icon {
-
-  background-color: #e0e8f3;
-
-  padding: 15px;
-
-  border-radius: 50%;
-
-  margin-right: 15px;
-
-  flex-shrink: 0;
-
-}
-
-.doctor-card .info-section {
-
-  flex-grow: 1;
-
-}
-
-
-
-.info-section .name {
-
-  font-weight: bold;
-
-  font-size: 1rem;
-
-  margin: 0 0 5px 0;
-
-}
-
-.info-section .specialty {
-
-  background-color: #d8f0f0;
-
-  color: #007bff;
-
-  padding: 2px 8px;
-
-  border-radius: 10px;
-
-  font-size: 0.75rem;
-
   font-weight: 600;
-
-  margin-bottom: 5px;
-
-  display: inline-block;
-
+  box-shadow: none;
 }
-
-
-
-.info-section .details {
-
-  font-size: 0.9rem;
-
-  color: #666;
-
-  margin: 3px 0;
-
+.nav-item-side.active .nav-label {
+  font-weight: 600;
 }
+.nav-item-side.active svg { fill: var(--primary-color); }
 
-
-
-.info-section .accredited {
-
-  font-size: 0.8rem;
-
-  color: var(--primary-color);
-
-  margin-top: 10px;
-
-  border-top: 1px dashed #cdd7e8;
-
-  padding-top: 5px;
-
-}
-
-
-
-.price-section {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-end;
-
-  justify-content: center; /* จัดให้อยู่กลาง (แนวตั้ง) */
-
-  flex-shrink: 0;
-
-  margin-left: 10px;
-
-  text-align: right;
-
-  height: 100%;
-
-}
-
-
-
-.price-section .price {
-
-  font-weight: bold;
-
-  color: #28a745;
-
-  font-size: 0.95rem;
-
-}
-
-
-
-.price-section .time {
-
-  font-size: 0.8rem;
-
-  color: #666;
-
-}
-/* --- เพิ่ม CSS สำหรับปุ่ม Logout --- */
-
+/* Logout */
 .nav-item-logout {
+  margin-top: auto;
+  color: #d9534f;
+  margin-bottom: 10px;
+}
+.nav-item-logout:hover { color: #a94442; background-color: #fdf5f5; }
 
-  /* คำสั่งนี้จะดันปุ่มนี้ให้ลงไปอยู่ล่างสุด */
 
-  margin-top: auto; 
+/* MAIN CONTENT AREA */
+.main-content-area {
+  margin-left: 0;
+  padding: 0px 10px;
+  background-color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+.content-body { padding-top: 10px; }
 
-  /* เปลี่ยนสีไอคอนเป็นสีแดง */
-
-  color: #d9534f; 
-
-  margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่างเล็กน้อย */
-
+/* Banner */
+.main-banner-content {
+  background-color: #E8F0FF;
+  height: 180px;
+  margin: 0 0 25px 0;
+  border-radius: 20px;
+  border: 1px solid #6B9BF6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  box-sizing: border-box;
+}
+.banner-text-content {
+  flex-basis: 60%;
+}
+.banner-text {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+.banner-subtext {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+}
+.banner-illustration-placeholder {
+  flex-basis: 35%;
+  height: 100%;
+  background-color: #e0e8f3;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #888;
+}
+.banner-illustration-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 
+/* Action Buttons (Ask AI) */
+.action-icons-row-large {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin: 25px 0;
+}
+.action-button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px 25px;
+  width: auto;
+  border-radius: 20px;
+  background-color: #E8F0FF;
+  border: 1px solid #6B9BF6;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+.action-button-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(107,155,246,0.3);
+  background-color: var(--background-blue-light);
+}
+.action-button-container .action-button { 
+  background-color: transparent; 
+  padding: 0; 
+  box-shadow: none; 
+  border: none; 
+  margin-bottom: 0;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+.action-button-container .label { font-size: 0.9rem; font-weight: 500; color: #333; }
 
-.nav-item-logout:hover {
-
-  color: #a94442; /* สีแดงเข้มขึ้นเมื่อ hover */
-
-  background-color: #fdf5f5; /* พื้นหลังสีแดงอ่อน */
-
+/* Tabs */
+.tab-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+  gap: 40px;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 5px;
+}
+.tab-selector span {
+  padding: 10px 0;
+  margin-right: 0;
+  font-size: 1.0rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s ease;
+  position: relative;
+}
+.tab-selector span:hover {
+  color: #666;
+}
+.active-tab {
+  color: var(--primary-color) !important;
+}
+.active-tab::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: calc(100% + 10px);
+  height: 4px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  animation: underline-slide-in 0.3s ease-out forwards;
+}
+@keyframes underline-slide-in {
+  from {
+    transform: translateX(-100%) scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
 }
 
-/* --- จบส่วน Logout --- */
+/* Doctor List */
+.doctor-list { padding-bottom: 50px; }
+.doctor-card {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-blue-bg);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: none;
+  margin-bottom: 15px;
+  border: 1px solid var(--border-color-light);
+}
+
+.doctor-photo-placeholder {
+  background-color: #e0e8f3;
+  border-radius: 12px;
+  margin-right: 15px;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.doctor-card .info-section { flex-grow: 1; }
+.info-section .name { font-weight: bold; font-size: 1rem; margin: 0 0 5px 0; }
+.info-section .specialty {
+  background-color: transparent;
+  color: #666;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-bottom: 5px;
+  display: block;
+}
+.info-section .details { font-size: 0.9rem; color: #666; margin: 3px 0; }
+.info-section .accredited {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  margin-top: 10px;
+  border-top: 1px dashed #cdd7e8;
+  padding-top: 5px;
+}
+.price-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin-left: 10px;
+  text-align: right;
+  height: 100%;
+}
+.price-section .price { font-weight: bold; color: #28a745; font-size: 0.95rem; }
+.price-section .time { font-size: 0.8rem; color: #666; }
+
+.book-now-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+.book-now-btn:hover {
+  background-color: #5076c2;
+}
+
+/* === CSS กระดิ่งแจ้งเตือน (อัปเดต Hover) === */
+.notification-bell-container {
+  position: relative;
+}
+.notification-count {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #d9534f;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--primary-color);
+}
+.notification-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+  /* (ข้อ 1) แก้ไข transition-delay ให้ช้าลง */
+  transition: opacity 0.3s ease, visibility 0s linear 6s, transform 0.3s ease;
+
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 320px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  z-index: 100;
+  color: #333;
+  overflow: hidden;
+}
+.notification-bell-container:hover .notification-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.notification-item {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item strong {
+  font-size: 0.9rem;
+  color: #333;
+}
+.notification-item p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 4px 0 6px 0;
+}
+.notification-item span {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+}
+/* (ลบ .all-notifications ออกแล้ว) */
+
+/* === CSS Profile Dropdown (Language) (อัปเดต Hover) === */
+.profile-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+  /* (ข้อ 1) แก้ไข transition-delay ให้ช้าลง */
+  transition: opacity 0.3s ease, visibility 0s linear 6s, transform 0.3s ease;
+  
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 100px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  z-index: 100;
+  color: #333;
+  overflow: hidden;
+  padding: 5px;
+}
+.profile-header-sm:hover .profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.language-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+.language-item:hover {
+  background-color: var(--card-blue-bg);
+}
+.language-item.active-lang {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+.language-item.active-lang:hover {
+  background-color: #5076c2;
+  color: white;
+}
+
+
+/* === ANIMATIONS === */
+@keyframes anim-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes anim-slide-in-left {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.anim-fade-in {
+  animation: anim-fade-in 0.5s ease-out;
+}
+.anim-slide-in-left {
+  animation: anim-slide-in-left 0.5s ease-out;
+}
+
+/* === Page Placeholder === */
+.page-placeholder {
+  padding: 20px;
+}
+.page-placeholder h2 {
+  color: #333;
+}
+.page-placeholder p {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* === START: CSS ใหม่สำหรับหน้า Profile (อัปเดต) === */
+
+.profile-page-content {
+  display: flex; /* (เปลี่ยนเป็น flex) */
+  flex-direction: column; /* (เรียงแนวตั้ง) */
+  align-items: flex-start; /* (ย่อตาม content) */
+  gap: 20px;
+}
+
+.profile-section-card {
+  background-color: #E8F0FF;
+  border: 1px solid #6B9BF6;
+  border-radius: 20px;
+  padding: 20px 25px;
+  box-shadow: var(--box-shadow-light);
+  box-sizing: border-box; /* (เพิ่ม) */
+  position: relative; /* (เพิ่ม) */
+}
+
+/* (เพิ่ม) บังคับให้บล็อก 1 และ 3 กว้างเต็ม */
+.profile-section-card:has(.personal-info-box),
+.profile-section-card:has(.medical-history-text),
+.profile-section-card:has(.profile-input-textarea) {
+  width: 100%;
+}
+
+.profile-section-card h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Section: Personal Info */
+.personal-info-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid var(--border-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-text-info {
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.profile-input-name,
+.profile-input-data {
+  border: none;
+  background-color: transparent;
+  padding: 4px 8px;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  resize: none;
+  min-height: 30px;
+  overflow: hidden;
+}
+.profile-input-name:focus,
+.profile-input-specialty:focus,
+.profile-input-data:focus {
+  outline: none;
+  background-color: #ffffff;
+}
+.profile-input-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+.profile-input-specialty {
+  border: none;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  resize: none;
+  min-height: 30px;
+  overflow: hidden;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: black;
+  background-color: #d8e2f8;
+  width: fit-content;
+}
+.profile-input-specialty:focus {
+   background-color: #cdd8f5;
+}
+.profile-input-data {
+  font-size: 0.9rem;
+  color: #666;
+}
+.profile-input-name::placeholder,
+.profile-input-specialty::placeholder,
+.profile-input-data::placeholder {
+  color: #777;
+  font-weight: 400;
+}
+
+/* (ข้อ 3) Section: Date Input */
+.profile-date-input-container {
+  position: relative;
+  max-width: 200px; /* <-- กว้างขึ้น */
+}
+.profile-date-input {
+  width: 100%;
+  padding: 8px 15px; /* <-- สั้นลง (ลด padding) */
+  padding-right: 40px; 
+  border-radius: 10px;
+  border: 1px solid #6B9BF6;
+  background-color: #ffffff;
+  font-size: 0.9rem;
+  color: #333;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+.profile-date-input::placeholder {
+  color: #999;
+}
+.profile-date-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* (ข้อ 4) Section: Medical History */
+/* (ลบ .medical-history-box ออก) */
+.profile-section-card:has(.medical-history-text),
+.profile-section-card:has(.profile-input-textarea) {
+  padding-bottom: 60px; /* (เว้นที่ให้ปุ่ม) */
+}
+.medical-history-text {
+  margin: 0;
+  font-weight: 500;
+  color: #555;
+  white-space: pre-wrap;
+  flex-grow: 1;
+  padding: 0;
+  word-break: break-word;
+}
+.profile-input-textarea {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #333;
+  resize: none;
+  overflow: hidden;
+  min-height: 40px;
+  padding: 8px 0;
+  width: 100%;
+}
+.profile-input-textarea:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.add-medical-history-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+}
+.add-medical-history-btn:hover {
+  opacity: 1;
+}
+.add-medical-history-btn svg {
+  filter: drop-shadow(0 2px 4px rgba(102,142,224,0.4));
+}
+/* (โค้ดสำหรับลดระยะห่างระหว่างหัวข้อและเนื้อหา "ประวัติการรักษา") */
+.profile-section-card:has(.medical-history-text) h3,
+.profile-section-card:has(.profile-input-textarea) h3 {
+  margin-bottom: 10px;
+}
+/* === END: CSS ใหม่สำหรับหน้า Profile === */
