@@ -179,6 +179,7 @@ body {
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden; 
+  position: relative;
 }
 
 /* SIDENAV */
@@ -443,21 +444,42 @@ body {
 .price-section .price { font-weight: bold; color: #28a745; font-size: 0.95rem; }
 .price-section .time { font-size: 0.8rem; color: #666; }
 
-.book-now-btn {
-  background-color: var(--primary-color);
-  color: white;
+
+/* === (ข้อ 4) START: ระบบปุ่มใหม่ === */
+.btn {
   border: none;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
-.book-now-btn:hover {
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+.btn-primary:hover {
   background-color: #5076c2;
 }
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+.btn-secondary:hover {
+  background-color: var(--background-blue-light);
+}
+.btn-danger {
+  background-color: #d9534f;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #a94442;
+}
+/* === (ข้อ 4) END: ระบบปุ่มใหม่ === */
+
 
 /* === CSS กระดิ่งแจ้งเตือน (อัปเดต Hover) === */
 .notification-bell-container {
@@ -623,6 +645,8 @@ body {
   box-shadow: var(--box-shadow-light);
   box-sizing: border-box;
   position: relative;
+  /* (ข้อ 1) เพิ่ม padding-bottom ให้ปุ่ม save */
+  padding-bottom: 60px;
 }
 
 .profile-section-card:has(.personal-info-box),
@@ -630,6 +654,12 @@ body {
 .profile-section-card:has(.profile-input-textarea) {
   width: 100%;
 }
+/* (ยกเว้นบล็อก 2) */
+.profile-section-card:has(.profile-date-input-container) {
+  width: auto;
+  padding-bottom: 20px; /* (คืนค่า padding) */
+}
+
 
 .profile-section-card h3 {
   color: #333;
@@ -752,10 +782,7 @@ body {
 }
 
 /* Section: Medical History */
-.profile-section-card:has(.medical-history-text),
-.profile-section-card:has(.profile-input-textarea) {
-  padding-bottom: 60px;
-}
+/* (ลบ .medical-history-box ออกแล้ว) */
 .medical-history-text {
   margin: 0;
   font-weight: 500;
@@ -803,4 +830,130 @@ body {
 .add-medical-history-btn svg {
   filter: drop-shadow(0 2px 4px rgba(102,142,224,0.4));
 }
-/* === END: CSS ใหม่สำหรับหน้า Profile === */
+/* (ลบ .profile-save-button-container) */
+
+/* (ข้อ 1) เพิ่มปุ่ม Save (ติ๊กถูก) ในกรอบ */
+.profile-save-btn {
+  /* ดีไซน์ */
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* ตำแหน่ง */
+  position: absolute;
+  bottom: 15px;
+  right: 15px; 
+}
+.profile-save-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+/* (ย้ายปุ่ม + ใน Medical History ออกจากมุม) */
+.profile-section-card:has(.medical-history-text) .add-medical-history-btn,
+.profile-section-card:has(.profile-input-textarea) .add-medical-history-btn {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  margin-left: 10px; /* (กลับไปเป็นแบบเดิม) */
+}
+
+
+/* === CSS ใหม่สำหรับหน้า Admin === */
+
+.admin-stats-header {
+  margin-bottom: 20px;
+}
+.stat-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.stat-card {
+  background-color: var(--card-blue-bg);
+  border: 1px solid var(--border-color-light);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--box-shadow-light);
+}
+.stat-card h3 {
+  margin: 10px 0 5px 0;
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+.stat-card p {
+  margin: 0;
+  font-weight: 500;
+  color: #555;
+}
+.management-page-content {
+  padding: 10px;
+}
+.management-page-content h2 {
+  color: #333;
+}
+.management-page-content p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 25px;
+}
+.management-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: var(--box-shadow-light);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.management-table th, 
+.management-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color-light);
+}
+.management-table th {
+  background-color: var(--card-blue-bg);
+  font-size: 0.9rem;
+  color: #333;
+}
+.management-table tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+.management-table tbody tr.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.management-table tr:hover,
+.management-table tbody tr.clickable-row:hover {
+  background-color: var(--background-blue-light);
+}
+.status-active, .status-pending {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.btn.btn-primary.btn-approve {
+  background-color: #28a745;
+}
+.btn.btn-primary.btn-approve:hover {
+  background-color: #218838;
+}
+/* === END: CSS ใหม่สำหรับหน้า Admin === */
