@@ -64,7 +64,7 @@ const useAuth = () => {
 
 
 
-  // useEffect 1: จัดการสถานะ Auth (ลบ isAuthReady ออก)
+  // useEffect 1: จัดการสถานะ Auth
 
   useEffect(() => {
 
@@ -72,9 +72,11 @@ const useAuth = () => {
 
       setUser(currentUser);
 
-      setLoading(false);
-
-      // *** MODIFIED: ลบ setIsAuthReady(true) ออกจากตรงนี้ ***
+      // ถ้าไม่มี user ให้ตั้งค่า ready ทันที
+      if (!currentUser) {
+        setIsAuthReady(true);
+        setLoading(false);
+      }
 
     });
 
