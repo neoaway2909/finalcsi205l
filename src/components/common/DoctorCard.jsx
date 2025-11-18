@@ -1,7 +1,7 @@
 import { FaUser } from "react-icons/fa";
 import { translations } from "../../constants/translations";
 
-export const DoctorCard = ({ name, specialty, hospital, cases, price, time, lang }) => (
+export const DoctorCard = ({ name, specialty, hospital, cases, price, time, lang, onBook }) => (
   <div className="doctor-card">
     <div className="doctor-photo-placeholder">
       <FaUser size={32} color="#c0d1f0" />
@@ -18,7 +18,7 @@ export const DoctorCard = ({ name, specialty, hospital, cases, price, time, lang
         <span className="price">{price} {translations[lang].baht}</span>
         <span className="time">{time} {translations[lang].minute}</span>
       </div>
-      <button className="btn btn-primary">{translations[lang].bookNow}</button>
+      <button className="btn btn-primary" onClick={onBook}>{translations[lang].bookNow}</button>
     </div>
   </div>
 );

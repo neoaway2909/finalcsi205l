@@ -2,7 +2,7 @@ import { DoctorCard, LoadingSkeletonCard, EmptyState, ActionButton } from "../..
 import { FaUserMd } from "react-icons/fa";
 import { translations } from "../../constants/translations";
 
-export const HomePage = ({ userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang }) => (
+export const HomePage = ({ userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, onBook }) => (
   <>
     <div className="main-banner-content">
       <div className="banner-text-content">
@@ -50,6 +50,7 @@ export const HomePage = ({ userName, activeTab, setActiveTab, isLoading, doctors
             price={doc.price || 0}
             time={doc.time || 0}
             lang={lang}
+            onBook={() => onBook(doc)}
           />
         ))
       )}

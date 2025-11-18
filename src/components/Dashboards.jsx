@@ -23,6 +23,7 @@ import { HomePage, AppointmentsPage } from "../pages/patient";
 import { ChatPage, ProfilePage } from "../pages/shared";
 import { QueuePage } from "../pages/doctor";
 import { DoctorManagementPage, PatientManagementPage } from "../pages/admin";
+import BookingPage from "../pages/patient/BookingPage";
 
 // Helper function for initial profile data
 const getInitialProfileData = (user) => ({
@@ -35,11 +36,15 @@ const getInitialProfileData = (user) => ({
 
 // Helper Component (Patient)
 const RenderPageContent = ({
-  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData
+  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, onBook, bookingDoctor, handleBackFromBooking
 }) => {
+  if (bookingDoctor) {
+    return <BookingPage doctor={bookingDoctor} onBack={handleBackFromBooking} lang={lang} />;
+  }
+
   switch (activeNav) {
     case 'home':
-      return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} />;
+      return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} onBook={onBook} />;
     case 'appointments':
       return <AppointmentsPage lang={lang} />;
     case 'messages':
@@ -47,7 +52,7 @@ const RenderPageContent = ({
     case 'profile':
       return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} />;
     default:
-      return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} />;
+      return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} onBook={onBook} />;
   }
 };
 
@@ -90,6 +95,15 @@ export const PatientDashboard = ({ user, logout, db }) => {
   const [profileToView, setProfileToView] = useState(user);
   const [isProfileDirty, setIsProfileDirty] = useState(false);
   const [profileData, setProfileData] = useState(() => getInitialProfileData(user));
+  const [bookingDoctor, setBookingDoctor] = useState(null);
+
+  const handleBookNow = (doctor) => {
+    setBookingDoctor(doctor);
+  };
+
+  const handleBackFromBooking = () => {
+    setBookingDoctor(null);
+  };
 
   const activeNav = location.pathname.slice(1) || "home";
 
@@ -219,6 +233,9 @@ export const PatientDashboard = ({ user, logout, db }) => {
                 isProfileDirty={isProfileDirty}
                 setIsProfileDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
+                onBook={handleBookNow}
+                bookingDoctor={bookingDoctor}
+                handleBackFromBooking={handleBackFromBooking}
               />
             </div>
           </div>
