@@ -1,0 +1,78 @@
+.about-doctor-page {
+  padding: 20px;
+  animation: anim-fade-in 0.3s ease-out;
+}
+
+.about-doctor-page .btn-link {
+  color: #6B9BF6;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.doctor-profile-header-about {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.doctor-profile-header-about .doctor-photo-placeholder {
+  margin-right: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f4ff;
+}
+
+.doctor-profile-header-about .info-section .name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.doctor-profile-header-about .info-section .specialty,
+.doctor-profile-header-about .info-section .details {
+  font-size: 1rem;
+  color: #666;
+  margin: 4px 0 0;
+}
+
+.about-section, .experience-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.about-section h3, .experience-section h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.about-section p, .experience-section p {
+  color: #555;
+  line-height: 1.6;
+}
+
+.experience-item {
+  margin-bottom: 10px;
+}
+
+.experience-item strong {
+  display: block;
+  font-weight: bold;
+  color: #333;
+}
+
+.bottom-cta {
+  text-align: center;
+  margin-top: 20px;
+}

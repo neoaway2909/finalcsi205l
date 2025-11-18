@@ -1,0 +1,68 @@
+.appointment-card {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.status-dot.red {
+  background-color: #e53935; /* Red */
+}
+
+.status-dot.green {
+  background-color: #43a047; /* Green */
+}
+
+.appointment-card .doctor-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.appointment-card .doctor-photo-placeholder {
+  margin-right: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f4ff;
+}
+
+.appointment-card .info-section .name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.appointment-card .info-section .specialty {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.appointment-card .appointment-details {
+  text-align: right;
+}
+
+.appointment-card .appointment-details .date,
+.appointment-card .appointment-details .time {
+  display: block;
+  color: #333;
+}
+
+.appointment-card .appointment-details .date {
+  font-weight: bold;
+}

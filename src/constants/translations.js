@@ -47,7 +47,18 @@ export const translations = {
     loadingPatients: "กำลังโหลดรายชื่อผู้ป่วย...",
     noPatientsFound: "ไม่พบผู้ป่วย",
     saveProfile: "บันทึกโปรไฟล์",
-    confirmLeave: "ยืนยันการแก้ไขหรือไม่? (ตกลง = บันทึก, ยกเลิก = ไม่บันทึก)"
+    confirmLeave: "ยืนยันการแก้ไขหรือไม่? (ตกลง = บันทึก, ยกเลิก = ไม่บันทึก)",
+    back: "ย้อนกลับ",
+    selectDate: "เลือกวันที่",
+    nextWeek: "สัปดาห์ถัดไป",
+    selectTime: "เลือกเวลา",
+    noDoctorSelected: "ยังไม่ได้เลือกแพทย์",
+    noDoctorSelectedDesc: "โปรดกลับไปหน้าหลักเพื่อเลือกแพทย์ที่ต้องการนัดหมาย",
+    goBack: "ย้อนกลับ",
+    backToHome: "กลับสู่หน้าหลัก",
+    selectDateAndTime: "เลือกวันและเวลา",
+    calendarPlaceholder: "ปฏิทินจะแสดงที่นี่",
+    confirmBooking: "ยืนยันการจอง"
   },
   en: {
     searchPlaceholder: "search for doctor, specialties",
@@ -97,6 +108,17 @@ export const translations = {
     loadingPatients: "Loading patients...",
     noPatientsFound: "No patients found.",
     saveProfile: "Save Profile",
-    confirmLeave: "Confirm changes? (OK = Save, Cancel = Don't Save)"
+    confirmLeave: "Confirm changes? (OK = Save, Cancel = Don't Save)",
+    back: "Back",
+    selectDate: "Select Date",
+    nextWeek: "Next Week",
+    selectTime: "Select Time",
+    noDoctorSelected: "No Doctor Selected",
+    noDoctorSelectedDesc: "Please go back to the home page to select a doctor for an appointment.",
+    goBack: "Go Back",
+    backToHome: "Back to Home",
+    selectDateAndTime: "Select Date and Time",
+    calendarPlaceholder: "Calendar will be displayed here.",
+    confirmBooking: "Confirm Booking"
   }
 };

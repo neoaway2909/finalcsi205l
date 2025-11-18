@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaUser, FaCalendarAlt as FaCalendarIcon, FaCheck, FaPlusCircle } from "react-icons/fa";
 import { translations } from "../../constants/translations";
+import './ProfilePage.css';
 
 export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsDirty, handleSaveAll }) => {
   const [isEditingHistory, setIsEditingHistory] = useState(false);
@@ -35,6 +36,8 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
   const onSave = () => {
     handleSaveAll(profileData);
   };
+
+  const medicalHistoryItems = profileData.medicalHistory?.split(',').map(item => item.trim()).filter(item => item);
 
   return (
     <div className="profile-page-content">
@@ -74,7 +77,15 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
           {isEditingHistory ? (
             <textarea name="medicalHistory" className="profile-input-textarea" placeholder={translations[lang].medicalHistoryPlaceholder} value={profileData.medicalHistory} onChange={handleChange} onInput={autoGrow} autoFocus />
           ) : (
-            <p className="medical-history-text">{profileData.medicalHistory || translations[lang].medicalHistoryPlaceholder}</p>
+            medicalHistoryItems && medicalHistoryItems.length > 0 ? (
+              <ul className="medical-history-list">
+                {medicalHistoryItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="medical-history-text">{translations[lang].medicalHistoryPlaceholder}</p>
+            )
           )}
           <button className="add-medical-history-btn" onClick={() => isEditingHistory ? handleMedicalHistorySave() : setIsEditingHistory(true)}>
             {isEditingHistory ? (<FaCheck size={28} color="#28a745" />) : (<FaPlusCircle size={28} color="#668ee0" />)}

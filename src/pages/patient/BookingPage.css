@@ -1,0 +1,175 @@
+.booking-page {
+  padding: 20px;
+  animation: anim-fade-in 0.3s ease-out;
+}
+
+.booking-page .btn-link {
+  color: #6B9BF6;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.doctor-profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.doctor-profile-header .doctor-photo-placeholder {
+  margin-right: 20px;
+}
+
+.doctor-profile-header .name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.doctor-profile-header .specialty,
+.doctor-profile-header .details {
+  font-size: 1rem;
+  color: #666;
+  margin: 4px 0 0;
+}
+
+.booking-calendar-container,
+.booking-time-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.booking-calendar-container h3,
+.booking-time-container h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B9BF6;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  text-align: center;
+}
+
+.calendar-day, .calendar-date {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.calendar-day {
+  font-weight: bold;
+  color: #999;
+}
+
+.calendar-date {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calendar-date:hover {
+  background-color: #f0f4ff;
+}
+
+.calendar-date.selected {
+  background-color: #6B9BF6;
+  color: white;
+  font-weight: bold;
+}
+
+.calendar-date.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.calendar-date.not-current-month {
+  color: #d0d0d0;
+  cursor: default;
+}
+
+.calendar-date.not-current-month:hover {
+  background-color: transparent;
+}
+
+.calendar-date.unavailable {
+  background-color: #ffdddd; /* Light red background */
+  color: #cc0000; /* Darker red text */
+  cursor: not-allowed;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.calendar-date.unavailable:hover {
+  background-color: #ffdddd; /* Keep background red on hover */
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.time-slot {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-slot:hover {
+  border-color: #6B9BF6;
+  background-color: #f0f4ff;
+}
+
+.time-slot.selected {
+  background-color: #6B9BF6;
+  color: white;
+  border-color: #6B9BF6;
+  font-weight: bold;
+}
+
+.booking-summary {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.booking-summary .btn-lg {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+}

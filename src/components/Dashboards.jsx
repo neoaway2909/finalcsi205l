@@ -24,6 +24,7 @@ import { ChatPage, ProfilePage } from "../pages/shared";
 import { QueuePage } from "../pages/doctor";
 import { DoctorManagementPage, PatientManagementPage } from "../pages/admin";
 import BookingPage from "../pages/patient/BookingPage";
+import AboutDoctorPage from "../pages/patient/AboutDoctorPage";
 
 // Helper function for initial profile data
 const getInitialProfileData = (user) => ({
@@ -36,17 +37,21 @@ const getInitialProfileData = (user) => ({
 
 // Helper Component (Patient)
 const RenderPageContent = ({
-  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, onBook, bookingDoctor, handleBackFromBooking
+  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, onBook, bookingDoctor, viewingDoctor, handleBackFromBooking, handleBackFromAbout, onBookingComplete, onBookAppointment, appointments
 }) => {
   if (bookingDoctor) {
-    return <BookingPage doctor={bookingDoctor} onBack={handleBackFromBooking} lang={lang} />;
+    return <BookingPage doctor={bookingDoctor} onBack={handleBackFromBooking} lang={lang} onBookingComplete={(appointmentDetails) => onBookingComplete(bookingDoctor, appointmentDetails)} />;
+  }
+
+  if (viewingDoctor) {
+    return <AboutDoctorPage doctor={viewingDoctor} onBack={handleBackFromAbout} onBookAppointment={() => onBookAppointment(viewingDoctor)} lang={lang} />;
   }
 
   switch (activeNav) {
     case 'home':
       return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} onBook={onBook} />;
     case 'appointments':
-      return <AppointmentsPage lang={lang} />;
+      return <AppointmentsPage lang={lang} appointments={appointments} />;
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
@@ -96,13 +101,41 @@ export const PatientDashboard = ({ user, logout, db }) => {
   const [isProfileDirty, setIsProfileDirty] = useState(false);
   const [profileData, setProfileData] = useState(() => getInitialProfileData(user));
   const [bookingDoctor, setBookingDoctor] = useState(null);
+  const [viewingDoctor, setViewingDoctor] = useState(null);
+  const [appointments, setAppointments] = useState([]);
 
-  const handleBookNow = (doctor) => {
+  const handleViewDoctor = (doctor) => {
+    setViewingDoctor(doctor);
+  };
+
+  const handleBookAppointment = (doctor) => {
     setBookingDoctor(doctor);
+    setViewingDoctor(null);
   };
 
   const handleBackFromBooking = () => {
+    const previouslyBookingDoctor = bookingDoctor;
     setBookingDoctor(null);
+    setViewingDoctor(previouslyBookingDoctor);
+  };
+  
+  const handleBackFromAbout = () => {
+    setViewingDoctor(null);
+  };
+
+  const handleBookingComplete = (doctor, appointmentDetails) => {
+    const newAppointment = {
+      id: `apt_${Date.now()}`,
+      doctor: doctor,
+      ...appointmentDetails
+    };
+    setAppointments(prev => [...prev, newAppointment]);
+    setBookingDoctor(null);
+    setViewingDoctor(null);
+  };
+
+  const handleCancelAppointment = (appointmentId) => {
+    setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
   };
 
   const activeNav = location.pathname.slice(1) || "home";
@@ -233,9 +266,14 @@ export const PatientDashboard = ({ user, logout, db }) => {
                 isProfileDirty={isProfileDirty}
                 setIsProfileDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
-                onBook={handleBookNow}
+                onBook={handleViewDoctor}
                 bookingDoctor={bookingDoctor}
+                viewingDoctor={viewingDoctor}
                 handleBackFromBooking={handleBackFromBooking}
+                handleBackFromAbout={handleBackFromAbout}
+                onBookingComplete={handleBookingComplete}
+                onBookAppointment={handleBookAppointment}
+                appointments={appointments}
               />
             </div>
           </div>
