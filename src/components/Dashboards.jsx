@@ -37,10 +37,10 @@ const getInitialProfileData = (user) => ({
 
 // Helper Component (Patient)
 const RenderPageContent = ({
-  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, onBook, bookingDoctor, viewingDoctor, handleBackFromBooking, handleBackFromAbout, onBookingComplete, onBookAppointment, appointments
+  activeNav, userName, activeTab, setActiveTab, isLoading, doctors, BotIcon, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, onBook, bookingDoctor, viewingDoctor, handleBackFromBooking, handleBackFromAbout, onBookingComplete, onBookAppointment, appointments, db, user
 }) => {
   if (bookingDoctor) {
-    return <BookingPage doctor={bookingDoctor} onBack={handleBackFromBooking} lang={lang} onBookingComplete={(appointmentDetails) => onBookingComplete(bookingDoctor, appointmentDetails)} />;
+    return <BookingPage doctor={bookingDoctor} onBack={handleBackFromBooking} lang={lang} onBookingComplete={(appointmentDetails) => onBookingComplete(bookingDoctor, appointmentDetails)} db={db} user={user} />;
   }
 
   if (viewingDoctor) {
@@ -62,16 +62,16 @@ const RenderPageContent = ({
 };
 
 // Helper Component (Doctor)
-const RenderDoctorPageContent = ({ activeNav, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData }) => {
+const RenderDoctorPageContent = ({ activeNav, lang, isProfileDirty, setIsProfileDirty, handleSaveProfile, profileData, setProfileData, db }) => {
   switch (activeNav) {
     case 'queue':
-      return <QueuePage lang={lang} />;
+      return <QueuePage lang={lang} db={db} />;
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
       return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} />;
     default:
-      return <QueuePage lang={lang} />;
+      return <QueuePage lang={lang} db={db} />;
   }
 };
 
@@ -274,6 +274,8 @@ export const PatientDashboard = ({ user, logout, db }) => {
                 onBookingComplete={handleBookingComplete}
                 onBookAppointment={handleBookAppointment}
                 appointments={appointments}
+                db={db}
+                user={user}
               />
             </div>
           </div>
@@ -284,7 +286,7 @@ export const PatientDashboard = ({ user, logout, db }) => {
 };
 
 // --- DoctorDashboard ---
-export const DoctorDashboard = ({ user, logout }) => {
+export const DoctorDashboard = ({ user, logout, db }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeLang, setActiveLang] = useState('th');
@@ -377,6 +379,7 @@ export const DoctorDashboard = ({ user, logout }) => {
                 isProfileDirty={isProfileDirty}
                 setIsProfileDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
+                db={db}
               />
             </div>
           </div>
