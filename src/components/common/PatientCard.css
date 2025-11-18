@@ -1,0 +1,43 @@
+.patient-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.patient-card .patient-info {
+  display: flex;
+  align-items: center;
+}
+
+.patient-card .patient-photo-placeholder {
+  margin-right: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f4ff;
+}
+
+.patient-card .info-section .name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.patient-card .info-section .details {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.patient-card .action-buttons {
+  display: flex;
+  gap: 10px;
+}

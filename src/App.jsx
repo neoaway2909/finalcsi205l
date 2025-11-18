@@ -118,7 +118,7 @@ function App() {
     case "patient":
       return <PatientDashboard user={userProfile} logout={logout} db={db} />;
     case "doctor":
-      return <DoctorDashboard user={userProfile} logout={logout} />;
+      return <DoctorDashboard user={userProfile} logout={logout} db={db} />;
     case "admin":
       return <AdminDashboard user={userProfile} logout={logout} db={db} />;
     default:
