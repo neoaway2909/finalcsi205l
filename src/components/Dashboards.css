@@ -365,22 +365,23 @@ body {
 .active-tab::after {
   content: '';
   position: absolute;
-  left: 50%;
+  left: 0;  /* (เปลี่ยนจาก 50% เป็น 0) */
   bottom: -3px;
-  width: calc(100% + 10px);
+  width: 100%; /* <-- **แก้ไขเป็น 100% (เท่าตัวอักษร)** */
   height: 4px;
   background-color: var(--primary-color);
   border-radius: 2px;
-  transform: translateX(-50%);
+  transform: none; /* (เอา transform ออก เพราะเราเริ่มจาก left: 0) */
   animation: underline-slide-in 0.3s ease-out forwards;
 }
+
 @keyframes underline-slide-in {
   from {
-    transform: translateX(-100%) scaleX(0);
+    width: 0;
     opacity: 0;
   }
   to {
-    transform: translateX(-50%) scaleX(1);
+    width: 100%;
     opacity: 1;
   }
 }
