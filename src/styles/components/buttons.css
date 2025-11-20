@@ -1,0 +1,525 @@
+/**
+ * ================================================================================
+ * BUTTON COMPONENTS - Material Design 3
+ * ================================================================================
+ *
+ * This file contains all button styles following Material Design 3 guidelines.
+ * Import theme.css before this file.
+ *
+ * Button Types:
+ * - Filled Button (Primary action)
+ * - Outlined Button (Secondary action)
+ * - Text Button (Tertiary action)
+ * - Elevated Button (Important action with elevation)
+ * - Tonal Button (Subtle filled button)
+ * - Icon Button (Icon-only button)
+ * - FAB (Floating Action Button)
+ */
+
+/* ============================================================================
+ * BASE BUTTON STYLES
+ * ============================================================================ */
+
+.md-button {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+
+  /* Typography */
+  font-family: var(--md-font-family);
+  font-size: var(--md-label-large-size);
+  font-weight: var(--md-label-large-weight);
+  letter-spacing: var(--md-label-large-spacing);
+  line-height: var(--md-label-large-line-height);
+  text-decoration: none;
+  white-space: nowrap;
+
+  /* Sizing */
+  height: var(--button-height-medium);
+  padding: 0 var(--button-padding-x-medium);
+
+  /* Appearance */
+  border: none;
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+
+  /* Interaction */
+  transition: var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.md-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Size Variants */
+.md-button--small {
+  height: var(--button-height-small);
+  padding: 0 var(--button-padding-x-small);
+  font-size: var(--md-label-medium-size);
+}
+
+.md-button--large {
+  height: var(--button-height-large);
+  padding: 0 var(--button-padding-x-large);
+  font-size: var(--md-title-medium-size);
+}
+
+/* Full Width */
+.md-button--full-width {
+  width: 100%;
+}
+
+/* ============================================================================
+ * FILLED BUTTON (Primary Action)
+ * ============================================================================ */
+
+.md-button--filled {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--elevation-0);
+}
+
+.md-button--filled:hover:not(:disabled) {
+  background-color: var(--md-primary-dark);
+  box-shadow: var(--elevation-1);
+  transform: translateY(-1px);
+}
+
+.md-button--filled:active:not(:disabled) {
+  background-color: var(--md-primary-dark);
+  box-shadow: var(--elevation-0);
+  transform: translateY(0);
+}
+
+.md-button--filled:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+/* Filled variants for different colors */
+.md-button--filled.md-button--error {
+  background-color: var(--md-error);
+  color: var(--md-on-error);
+}
+
+.md-button--filled.md-button--error:hover:not(:disabled) {
+  background-color: var(--md-error-dark);
+}
+
+.md-button--filled.md-button--success {
+  background-color: var(--md-success);
+  color: var(--md-on-success);
+}
+
+.md-button--filled.md-button--success:hover:not(:disabled) {
+  background-color: var(--md-success-dark);
+}
+
+/* ============================================================================
+ * OUTLINED BUTTON (Secondary Action)
+ * ============================================================================ */
+
+.md-button--outlined {
+  background-color: transparent;
+  color: var(--md-primary);
+  border: 1px solid var(--md-outline);
+  box-shadow: none;
+}
+
+.md-button--outlined:hover:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.08);
+  border-color: var(--md-primary);
+}
+
+.md-button--outlined:active:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.12);
+}
+
+.md-button--outlined:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.md-button--outlined.md-button--error {
+  color: var(--md-error);
+  border-color: var(--md-error);
+}
+
+.md-button--outlined.md-button--error:hover:not(:disabled) {
+  background-color: rgba(244, 67, 54, 0.08);
+}
+
+/* ============================================================================
+ * TEXT BUTTON (Tertiary Action)
+ * ============================================================================ */
+
+.md-button--text {
+  background-color: transparent;
+  color: var(--md-primary);
+  padding: 0 var(--spacing-3);
+  box-shadow: none;
+}
+
+.md-button--text:hover:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.08);
+}
+
+.md-button--text:active:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.12);
+}
+
+.md-button--text.md-button--error {
+  color: var(--md-error);
+}
+
+.md-button--text.md-button--error:hover:not(:disabled) {
+  background-color: rgba(244, 67, 54, 0.08);
+}
+
+/* ============================================================================
+ * ELEVATED BUTTON (Prominent Action with Shadow)
+ * ============================================================================ */
+
+.md-button--elevated {
+  background-color: var(--md-surface-container-low);
+  color: var(--md-primary);
+  box-shadow: var(--elevation-1);
+}
+
+.md-button--elevated:hover:not(:disabled) {
+  background-color: var(--md-surface-container);
+  box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
+}
+
+.md-button--elevated:active:not(:disabled) {
+  box-shadow: var(--elevation-1);
+  transform: translateY(0);
+}
+
+/* ============================================================================
+ * TONAL BUTTON (Filled with Primary Container)
+ * ============================================================================ */
+
+.md-button--tonal {
+  background-color: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  box-shadow: none;
+}
+
+.md-button--tonal:hover:not(:disabled) {
+  background-color: var(--md-primary-light);
+  box-shadow: var(--elevation-1);
+}
+
+.md-button--tonal:active:not(:disabled) {
+  box-shadow: none;
+}
+
+/* ============================================================================
+ * ICON BUTTON (Icon Only - Circular)
+ * ============================================================================ */
+
+.md-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.md-icon-button:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.md-icon-button:active:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.md-icon-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* Icon Button Variants */
+.md-icon-button--filled {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.md-icon-button--filled:hover:not(:disabled) {
+  background-color: var(--md-primary-dark);
+  box-shadow: var(--elevation-1);
+}
+
+.md-icon-button--tonal {
+  background-color: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
+}
+
+.md-icon-button--outlined {
+  border: 1px solid var(--md-outline);
+}
+
+/* Icon Button Color Variants */
+.md-icon-button--primary {
+  color: var(--md-primary);
+  background-color: rgba(40, 103, 228, 0.08);
+}
+
+.md-icon-button--primary:hover:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.12);
+}
+
+.md-icon-button--error {
+  color: var(--md-error);
+  background-color: rgba(244, 67, 54, 0.08);
+}
+
+.md-icon-button--error:hover:not(:disabled) {
+  background-color: rgba(244, 67, 54, 0.12);
+}
+
+.md-icon-button--success {
+  color: var(--md-success);
+  background-color: rgba(40, 167, 69, 0.08);
+}
+
+.md-icon-button--success:hover:not(:disabled) {
+  background-color: rgba(40, 167, 69, 0.12);
+}
+
+/* Icon Button Sizes */
+.md-icon-button--small {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+.md-icon-button--large {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+}
+
+/* ============================================================================
+ * FAB (Floating Action Button)
+ * ============================================================================ */
+
+.md-fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  height: 56px;
+  padding: 0 var(--spacing-4);
+  min-width: 56px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background-color: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-family: var(--md-font-family);
+  font-size: var(--md-label-large-size);
+  font-weight: var(--md-label-large-weight);
+  box-shadow: var(--elevation-3);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.md-fab:hover:not(:disabled) {
+  box-shadow: var(--elevation-4);
+  transform: translateY(-2px);
+}
+
+.md-fab:active:not(:disabled) {
+  box-shadow: var(--elevation-2);
+  transform: translateY(0);
+}
+
+/* FAB Variants */
+.md-fab--primary {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.md-fab--secondary {
+  background-color: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.md-fab--tertiary {
+  background-color: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+}
+
+.md-fab--surface {
+  background-color: var(--md-surface-container-high);
+  color: var(--md-primary);
+}
+
+/* FAB Sizes */
+.md-fab--small {
+  height: 40px;
+  min-width: 40px;
+  padding: 0 var(--spacing-3);
+}
+
+.md-fab--large {
+  height: 96px;
+  min-width: 96px;
+  border-radius: var(--radius-2xl);
+  font-size: var(--md-title-large-size);
+}
+
+/* Extended FAB (with label) */
+.md-fab--extended {
+  padding: 0 var(--spacing-4);
+}
+
+/* ============================================================================
+ * BUTTON GROUPS
+ * ============================================================================ */
+
+.md-button-group {
+  display: inline-flex;
+  gap: var(--spacing-2);
+}
+
+.md-button-group--vertical {
+  flex-direction: column;
+}
+
+/* ============================================================================
+ * LEGACY COMPATIBILITY CLASSES
+ * (For gradual migration from old button styles)
+ * ============================================================================ */
+
+/* Map old class names to new design system */
+.btn-primary {
+  /* Use .md-button--filled instead */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: var(--md-label-large-weight);
+  font-size: var(--md-label-large-size);
+  line-height: var(--md-label-large-line-height);
+  letter-spacing: var(--md-label-large-tracking);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  border: none;
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--elevation-1);
+}
+
+.btn-secondary {
+  /* Use .md-button--outlined instead */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: var(--md-label-large-weight);
+  font-size: var(--md-label-large-size);
+  line-height: var(--md-label-large-line-height);
+  letter-spacing: var(--md-label-large-tracking);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--md-primary);
+  border: 1px solid var(--md-outline);
+}
+
+.btn-danger {
+  /* Use .md-button--filled.md-button--error instead */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: var(--md-label-large-weight);
+  font-size: var(--md-label-large-size);
+  line-height: var(--md-label-large-line-height);
+  letter-spacing: var(--md-label-large-tracking);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  border: none;
+  background-color: var(--md-error);
+  color: var(--md-on-error);
+  box-shadow: var(--elevation-1);
+}
+
+/* New simplified button classes for common patterns */
+.btn.btn-icon {
+  /* Maps to icon button */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.btn.btn-icon.btn-primary {
+  color: var(--md-primary);
+  background-color: rgba(40, 103, 228, 0.08);
+}
+
+.btn.btn-icon.btn-primary:hover:not(:disabled) {
+  background-color: rgba(40, 103, 228, 0.12);
+  box-shadow: var(--elevation-primary-1);
+  transform: translateY(-2px);
+}
+
+.btn.btn-icon.btn-danger {
+  color: var(--md-error);
+  background-color: rgba(244, 67, 54, 0.08);
+}
+
+.btn.btn-icon.btn-danger:hover:not(:disabled) {
+  background-color: rgba(244, 67, 54, 0.12);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn.btn-icon.btn-success {
+  color: var(--md-success);
+  background-color: rgba(40, 167, 69, 0.08);
+}
+
+.btn.btn-icon.btn-success:hover:not(:disabled) {
+  background-color: rgba(40, 167, 69, 0.12);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn.btn-icon:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}

@@ -1,0 +1,127 @@
+.alert-modal {
+  width: 400px;
+  max-width: 90vw;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-modal .close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.alert-modal .close-button:hover {
+  background: #f0f4ff;
+  color: #0056b3;
+}
+
+.alert-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.alert-icon-success {
+  color: #28a745;
+}
+
+.alert-icon-error {
+  color: #f44336;
+}
+
+.alert-icon-info {
+  color: #6B9BF6;
+}
+
+.alert-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.alert-message {
+  margin: 0 0 2rem 0;
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+.alert-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.alert-actions .btn {
+  min-width: 120px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 1rem;
+}
+
+.alert-actions .btn-primary {
+  background: #0056b3;
+  color: white;
+}
+
+.alert-actions .btn-primary:hover {
+  background: #004494;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+}
+
+.alert-actions .btn-danger {
+  background: #c62828;
+  color: white;
+}
+
+.alert-actions .btn-danger:hover {
+  background: #da190b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+@media (max-width: 768px) {
+  .alert-modal {
+    width: 90vw;
+    padding: 1.5rem;
+  }
+
+  .alert-title {
+    font-size: 1.25rem;
+  }
+
+  .alert-message {
+    font-size: 0.9rem;
+  }
+}

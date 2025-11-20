@@ -1,34 +1,110 @@
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
-import './PatientCard.css';
+import { FaUser, FaHistory, FaCheck, FaNotesMedical } from 'react-icons/fa';
+import { Card, CardHeader, CardFooter } from '../ui/card';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
+import { translations } from '../../constants/translations';
+import { cn } from '../../lib/utils';
 
-const PatientCard = ({ appointment, onAddMedicalHistory, onComplete }) => {
-  const { patient, date, status } = appointment;
-  const { name, age, gender, reason } = patient;
-  const isPast = new Date(date) < new Date();
+const PatientCard = ({ appointment, onAddMedicalHistory, onComplete, onViewHistory, lang = 'th' }) => {
+  const { patient, date, time, status } = appointment;
+  const patientName = patient?.displayName || patient?.name || patient?.email || 'Unknown Patient';
+  const patientAge = patient?.age || 'N/A';
+  const patientGender = patient?.gender || 'N/A';
+
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'default';
+      case 'scheduled':
+      case 'instant':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-500 text-white hover:bg-green-600';
+      case 'scheduled':
+      case 'instant':
+        return 'bg-blue-500 text-white hover:bg-blue-600';
+      default:
+        return '';
+    }
+  };
 
   return (
-    <div className="patient-card">
-      <div className="patient-info">
-        <div className="patient-photo-placeholder">
-          <FaUser size={32} color="#c0d1f0" />
+    <Card className="hover:shadow-lg transition-shadow duration-200">
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-4">
+          <Avatar className="h-16 w-16">
+            <AvatarFallback className="bg-primary/10 text-primary">
+              <FaUser size={32} />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 space-y-2">
+            <div className="flex items-start justify-between">
+              <h3 className="text-lg font-semibold leading-none">{patientName}</h3>
+              <Badge variant={getStatusVariant(status)} className={cn(getStatusColor(status))}>
+                {status}
+              </Badge>
+            </div>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <div className="flex gap-4">
+                <span>Age: {patientAge}</span>
+                <span>Gender: {patientGender}</span>
+              </div>
+              <p className="text-xs">
+                {date} at {time}
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="info-section">
-          <p className="name">{name}</p>
-          <span className="details">Age: {age}</span>
-          <span className="details">Gender: {gender}</span>
-          <p className="details">Reason: {reason}</p>
-        </div>
-      </div>
-      <div className="action-buttons">
-        {!isPast && status === 'scheduled' && (
-          <button className="btn btn-success" onClick={() => onComplete(appointment.id)}>Complete</button>
+      </CardHeader>
+
+      <Separator />
+
+      <CardFooter className="flex flex-wrap gap-2 pt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onViewHistory(appointment)}
+          className="flex-1"
+        >
+          <FaHistory className="mr-2" />
+          {translations[lang].viewMedicalHistory}
+        </Button>
+
+        {(status === 'scheduled' || status === 'instant') && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => onComplete(appointment.id)}
+            className="flex-1 bg-green-600 hover:bg-green-700"
+          >
+            <FaCheck className="mr-2" />
+            Complete
+          </Button>
         )}
-        {isPast && status === 'completed' && (
-          <button className="btn btn-primary" onClick={() => onAddMedicalHistory(appointment)}>Add Medical History</button>
+
+        {status === 'completed' && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => onAddMedicalHistory(appointment)}
+            className="flex-1"
+          >
+            <FaNotesMedical className="mr-2" />
+            Add Medical History
+          </Button>
         )}
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 

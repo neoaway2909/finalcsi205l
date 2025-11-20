@@ -1,0 +1,127 @@
+/**
+ * ================================================================================
+ * CARD COMPONENTS - Material Design 3
+ * ================================================================================
+ *
+ * Card styles following Material Design 3 guidelines.
+ * Import theme.css before this file.
+ */
+
+/* ============================================================================
+ * BASE CARD STYLES
+ * ============================================================================ */
+
+.md-card {
+  background-color: var(--md-surface-container-low);
+  border-radius: var(--radius-card);
+  padding: var(--card-padding);
+  box-shadow: var(--elevation-0);
+  transition: var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Card Elevation Variants */
+.md-card--elevated {
+  background-color: var(--md-surface-container-low);
+  box-shadow: var(--elevation-1);
+}
+
+.md-card--elevated:hover {
+  box-shadow: var(--elevation-2);
+}
+
+.md-card--filled {
+  background-color: var(--md-surface-container-highest);
+  box-shadow: none;
+}
+
+.md-card--outlined {
+  background-color: var(--md-surface);
+  border: 1px solid var(--md-outline-variant);
+  box-shadow: none;
+}
+
+/* Interactive Card */
+.md-card--interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.md-card--interactive:hover {
+  box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
+}
+
+.md-card--interactive:active {
+  box-shadow: var(--elevation-1);
+  transform: translateY(0);
+}
+
+/* ============================================================================
+ * CARD SECTIONS
+ * ============================================================================ */
+
+.md-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.md-card__title {
+  font-size: var(--md-title-large-size);
+  font-weight: var(--md-title-large-weight);
+  line-height: var(--md-title-large-line-height);
+  color: var(--md-on-surface);
+  margin: 0;
+}
+
+.md-card__subtitle {
+  font-size: var(--md-body-medium-size);
+  line-height: var(--md-body-medium-line-height);
+  color: var(--md-on-surface-variant);
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.md-card__body {
+  font-size: var(--md-body-large-size);
+  line-height: var(--md-body-large-line-height);
+  color: var(--md-on-surface);
+}
+
+.md-card__actions {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.md-card__actions--end {
+  justify-content: flex-end;
+}
+
+/* ============================================================================
+ * LEGACY COMPATIBILITY
+ * ============================================================================ */
+
+/* Maps old card classes to new design system */
+.patient-card,
+.appointment-card,
+.medical-history-card {
+  background-color: var(--md-surface-container-low);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-5);
+  box-shadow: var(--elevation-1);
+  margin-bottom: var(--spacing-5);
+  transition: var(--transition-normal);
+}
+
+.patient-card:hover,
+.appointment-card:hover,
+.medical-history-card:hover {
+  box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
+  cursor: pointer;
+}

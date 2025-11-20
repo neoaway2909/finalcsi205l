@@ -41,3 +41,53 @@
   display: flex;
   gap: 10px;
 }
+
+.patient-card .info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-top: 0.5rem;
+  width: fit-content;
+}
+
+.status-scheduled {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.status-completed {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status-instant {
+  background: #fff3e0;
+  color: #bf360c;
+}
+
+.btn-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0c5460;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
