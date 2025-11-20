@@ -3,12 +3,15 @@ import { FaUser, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { translations } from '../../constants/translations';
 import BookingSuccessPage from './BookingSuccessPage';
 import './BookingPage.css';
+import { bookAppointment, createNotification } from '../../firebase';
+import useAuth from '../../hooks/useAuth';
 
 const BookingPage = ({ doctor, onBack, lang, onBookingComplete }) => {
   const [currentDate, setCurrentDate] = useState(new Date('2025-01-01'));
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [bookingState, setBookingState] = useState('form'); // 'form', 'booking', 'success'
+  const { userProfile } = useAuth();
 
   if (!doctor) {
     return (
@@ -32,12 +35,35 @@ const BookingPage = ({ doctor, onBack, lang, onBookingComplete }) => {
     setSelectedTime(time);
   };
 
-  const handleBookAppointment = () => {
+  const handleBookAppointment = async () => {
+    if (!userProfile) {
+      console.error("User not logged in");
+      return;
+    }
     setBookingState('booking');
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const appointmentData = {
+        doctorId: doctor.id,
+        patientId: userProfile.uid,
+        date: selectedDate.toISOString().split('T')[0], // YYYY-MM-DD
+        time: selectedTime,
+        status: 'scheduled',
+        createdAt: new Date(),
+      };
+      const appointmentId = await bookAppointment(appointmentData);
+      await createNotification({
+        type: 'new_booking',
+        appointmentId,
+        doctorId: doctor.id,
+        patientId: userProfile.uid,
+        message: `New booking from ${userProfile.displayName} for Dr. ${doctor.name} on ${selectedDate.toLocaleDateString()} at ${selectedTime}.`,
+        timestamp: new Date(),
+      });
       setBookingState('success');
-    }, 1500);
+    } catch (error) {
+      console.error("Error booking appointment: ", error);
+      setBookingState('form');
+    }
   };
 
   const generateCalendar = (year, month) => {

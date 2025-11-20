@@ -9,6 +9,7 @@ import {
   AdminDashboard,
 } from "./components/Dashboards"; // Import Dashboards ทั้ง 3 ตัว
 import { db } from "./firebase"; // Import db
+import LoadingScreen from "./components/common/LoadingScreen";
 
 function App() {
   const { user, userProfile, isAuthReady, loading, logout } = useAuth();
@@ -74,18 +75,7 @@ function App() {
 
   // ถ้าล็อกอินแล้ว แต่กำลังโหลด userProfile
   if (loading) {
-    return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "50px",
-          fontSize: "1.2rem",
-          color: "#666",
-        }}
-      >
-        กำลังโหลดระบบ... โปรดรอสักครู่
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // ถ้าล็อกอินแล้ว แต่ยังไม่มี Role

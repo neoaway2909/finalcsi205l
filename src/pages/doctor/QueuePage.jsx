@@ -3,29 +3,66 @@ import { translations } from "../../constants/translations";
 import PatientCard from "../../components/common/PatientCard";
 import { EmptyState } from "../../components/common";
 import { FaUsers } from "react-icons/fa";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import useAuth from '../../hooks/useAuth';
+import { addMedicalHistory, updateAppointmentStatus } from '../../firebase';
+import MedicalHistoryModal from '../../components/common/MedicalHistoryModal';
+console.log({ addMedicalHistory, updateAppointmentStatus });
 
 export const QueuePage = ({ lang, db }) => {
-  const [patients, setPatients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // For now, using a static list of patients for demonstration.
-  // In a real application, you would fetch this from Firestore using the 'db' prop.
   useEffect(() => {
-    const staticPatients = [
-      { id: 1, name: 'John Doe', age: 35, gender: 'Male', reason: 'Follow-up checkup' },
-      { id: 2, name: 'Jane Smith', age: 28, gender: 'Female', reason: 'Sore throat' },
-    ];
-    setPatients(staticPatients);
-    setIsLoading(false);
-  }, []);
+    if (!db || !user) return;
 
-  const handleAccept = (patient) => {
-    alert(`Accepted patient: ${patient.name}`);
-    // Here you would typically update the patient's status in the database
+    const fetchAppointments = async () => {
+      setIsLoading(true);
+      const q = query(collection(db, "appointments"), where("doctorId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+      const appointmentsData = await Promise.all(querySnapshot.docs.map(async (doc) => {
+        const appointment = { id: doc.id, ...doc.data() };
+        const patientDoc = await getDoc(doc(db, "users", appointment.patientId));
+        const patientData = patientDoc.data();
+        return { ...appointment, patient: patientData };
+      }));
+      setAppointments(appointmentsData);
+      setIsLoading(false);
+    };
+
+    fetchAppointments();
+  }, [db, user]);
+
+  const handleAddMedicalHistory = (appointment) => {
+    setSelectedAppointment(appointment);
+    setIsModalOpen(true);
   };
 
-  const handleDecline = (patientId) => {
-    setPatients(prev => prev.filter(p => p.id !== patientId));
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedAppointment(null);
+  };
+
+const handleModalSave = async (historyData) => {
+    try {
+      await addMedicalHistory(historyData);
+      // Optionally, update the appointment status to 'completed_with_history'
+    } catch (error) {
+      console.error("Error saving medical history: ", error);
+    }
+    handleModalClose();
+  };
+
+  const handleCompleteAppointment = async (appointmentId) => {
+    try {
+      await updateAppointmentStatus(appointmentId, 'completed');
+      setAppointments(prev => prev.map(app => app.id === appointmentId ? { ...app, status: 'completed' } : app));
+    } catch (error) {
+      console.error("Error completing appointment: ", error);
+    }
   };
 
   return (
@@ -34,14 +71,14 @@ export const QueuePage = ({ lang, db }) => {
       
       {isLoading ? (
         <p>Loading patients...</p>
-      ) : patients.length > 0 ? (
+      ) : appointments.length > 0 ? (
         <div className="patient-list">
-          {patients.map(p => (
+          {appointments.map(app => (
             <PatientCard 
-              key={p.id} 
-              patient={p} 
-              onAccept={handleAccept}
-              onDecline={handleDecline}
+              key={app.id} 
+              appointment={app} 
+              onAddMedicalHistory={handleAddMedicalHistory}
+              onComplete={handleCompleteAppointment}
             />
           ))}
         </div>
@@ -49,6 +86,14 @@ export const QueuePage = ({ lang, db }) => {
         <EmptyState 
           message="No patients in the queue."
           icon={<FaUsers size={48} />}
+        />
+      )}
+
+      {isModalOpen && (
+        <MedicalHistoryModal
+          appointment={selectedAppointment}
+          onClose={handleModalClose}
+          onSave={handleModalSave}
         />
       )}
     </div>

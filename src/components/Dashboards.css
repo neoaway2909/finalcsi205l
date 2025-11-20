@@ -1,15 +1,10 @@
-:root {
-  --primary-color: #668ee0;
-  --background-blue-light: #e6f0ff;
-  --card-blue-bg: #f5f8fd;
-  --box-shadow-light: 0 4px 12px rgba(0,0,0,0.05);
-  --border-color-light: #e0e8f3;
-}
+/* Using Design System - No local variables needed */
+/* All tokens are imported from src/styles/theme.css */
 
 /* GLOBAL */
 body {
-  background-color: var(--background-blue-light);
-  font-family: 'Inter', sans-serif;
+  background-color: var(--md-background-alt);
+  font-family: var(--md-font-family);
   margin: 0;
 }
 
@@ -24,9 +19,9 @@ body {
   height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--primary-color);
-  padding: 0; 
-  gap: 20px;
+  background-color: var(--md-primary);
+  padding: 0;
+  gap: 0;
 }
 
 /* === Wrapper === */
@@ -35,7 +30,7 @@ body {
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-areas: "sidenav content";
-  gap: 0px;
+  gap: 0;
   overflow: hidden;
   height: 100%;
 }
@@ -44,21 +39,22 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 
 /* HEADER */
 .top-header-bar {
-  grid-area: header; 
+  grid-area: header;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 25px;
-  background: var(--primary-color);
+  padding: var(--spacing-4) var(--spacing-8);
+  background: var(--md-primary);
   border-radius: 0;
-  box-shadow: 0 4px 12px rgba(102,142,224,0.3);
-  height: 85px;
+  box-shadow: var(--elevation-3);
+  height: 80px;
+  min-height: 80px;
 }
 .logo-container-header {
   display: flex;
@@ -67,48 +63,59 @@ body {
 .app-logo-header-icon {
   width: 50px;
   height: 50px;
-  border-radius: 12px;
-  background-color: #ffffff;
+  border-radius: var(--radius-md);
+  background-color: var(--md-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 5px;
+  box-shadow: var(--elevation-2);
+  padding: var(--spacing-1);
   box-sizing: border-box;
 }
 
 .search-bar-header {
   display: flex;
   align-items: center;
-  background-color: #E8F0FF;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
   flex-grow: 1;
-  max-width: 500px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: none;
+  max-width: 600px;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: var(--transition-normal);
+}
+.search-bar-header:focus-within {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+.search-bar-header svg {
+  color: rgba(255, 255, 255, 0.8);
+  margin-right: var(--spacing-3);
 }
 .search-bar-header input {
   border: none;
   background: transparent;
-  font-size: 0.95rem;
+  font-size: var(--md-body-large-size);
   outline: none;
   width: 100%;
-  color: black;
+  color: var(--md-on-primary);
 }
 .search-bar-header input::placeholder {
-  color: #939393;
+  color: rgba(255, 255, 255, 0.7);
   opacity: 1;
 }
 
 .header-actions-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--spacing-4);
 }
 
 .header-icon-wrapper {
   background-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   width: 45px;
   height: 45px;
   display: flex;
@@ -116,14 +123,14 @@ body {
   justify-content: center;
   margin: 0;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: var(--transition-normal);
 }
 .header-icon-wrapper:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
 .header-icon-wrapper svg {
-  color: #ffffff;
+  color: var(--md-on-primary);
 }
 
 .profile-header-sm {
@@ -131,27 +138,27 @@ body {
   display: flex;
   align-items: center;
   background-color: transparent;
-  padding: 5px 10px;
-  border-radius: 25px;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  color: #ffffff;
-  transition: background-color 0.2s ease;
+  color: var(--md-on-primary);
+  transition: var(--transition-normal);
 }
 .profile-header-sm:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 .profile-header-sm .user-icon-sm {
-  background-color: #ffffff;
-  border-radius: 50%;
+  background-color: var(--md-surface);
+  border-radius: var(--radius-circle);
   width: 45px;
   height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 10px;
+  margin-right: var(--spacing-2);
 }
 .profile-header-sm .user-icon-sm svg {
-  color: var(--primary-color);
+  color: var(--md-primary);
 }
 .user-info-sm {
   display: flex;
@@ -160,39 +167,46 @@ body {
   line-height: 1.3;
 }
 .user-info-sm .name {
-  font-weight: 600;
-  color: #ffffff;
-  font-size: 0.9rem;
+  font-weight: var(--md-label-large-weight);
+  color: var(--md-on-primary);
+  font-size: var(--md-body-medium-size);
 }
 .user-info-sm .id-card {
-  font-size: 0.8rem;
-  color: #e0e8f3;
+  font-size: var(--md-body-small-size);
+  color: var(--md-on-primary);
+  opacity: 0.8;
 }
 
 
 /* CONTENT CONTAINER */
 .content-container {
-  grid-area: content; 
-  background-color: white;
-  border-radius: 0px 50px 0 0;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-  padding: 20px;
+  grid-area: content;
+  background-color: var(--md-surface);
+  border-radius: 0 30px 0 0;
+  box-shadow: none;
+  padding: var(--spacing-5);
   box-sizing: border-box;
-  overflow: hidden; 
+  overflow: hidden;
   position: relative;
+}
+
+/* Remove padding when chat page is displayed */
+.content-container:has(.chat-page) {
+  padding: 0;
 }
 
 /* SIDENAV */
 .side-nav {
-  grid-area: sidenav; 
+  grid-area: sidenav;
   width: 280px;
-  background-color: #fff;
-  padding: 10px 0 20px 0;
+  background-color: var(--md-surface);
+  padding: var(--spacing-2) 0 var(--spacing-5) 0;
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
-  border-radius: 50px 0px 0 0;
+  border-radius: 30px 0 0 0;
+  border-right: 1px solid var(--md-outline-variant);
 }
 .nav-menu {
   width: 100%;
@@ -200,98 +214,158 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: var(--spacing-5);
 }
 .nav-item-side {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 15px 25px;
-  margin: 8px 20px;
+  padding: var(--spacing-4) var(--spacing-6);
+  margin: var(--spacing-2) var(--spacing-5);
   cursor: pointer;
-  color: #555e68;
-  transition: all 0.2s ease;
-  border-radius: 12px;
+  color: var(--md-on-surface-variant);
+  transition: var(--transition-normal);
+  border-radius: var(--radius-md);
   width: calc(100% - 40px);
   height: auto;
   box-sizing: border-box;
 }
 .nav-label {
-  margin-left: 15px;
-  font-size: 0.95rem;
-  font-weight: 500;
+  margin-left: var(--spacing-4);
+  font-size: var(--md-body-large-size);
+  font-weight: var(--md-label-large-weight);
 }
 
 .nav-item-side:hover {
-  color: var(--primary-color);
-  background-color: var(--card-blue-bg);
+  color: var(--md-primary);
+  background-color: var(--md-surface-container-highest);
 }
 .nav-item-side.active {
-  background-color: var(--background-blue-light);
-  color: var(--primary-color);
-  font-weight: 600;
+  background-color: var(--md-primary-container);
+  color: var(--md-primary);
+  font-weight: var(--md-label-large-weight);
   box-shadow: none;
 }
 .nav-item-side.active .nav-label {
-  font-weight: 600;
+  font-weight: var(--md-label-large-weight);
 }
-.nav-item-side.active svg { fill: var(--primary-color); }
+.nav-item-side.active svg { fill: var(--md-primary); }
 
 /* Logout */
 .nav-item-logout {
   margin-top: auto;
-  color: #d9534f;
-  margin-bottom: 10px;
+  color: var(--md-error);
+  margin-bottom: var(--spacing-2);
 }
-.nav-item-logout:hover { color: #a94442; background-color: #fdf5f5; }
+.nav-item-logout:hover { color: var(--md-error-dark); background-color: var(--md-error-container); }
 
 
 /* MAIN CONTENT AREA */
 .main-content-area {
   margin-left: 0;
-  padding: 0px 10px;
-  background-color: white;
+  padding: 0px var(--spacing-2);
+  background-color: var(--md-surface);
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-outline-variant) transparent;
+  display: flex;
+  flex-direction: column;
 }
-.content-body { padding-top: 10px; }
+
+/* Remove padding when chat page is displayed */
+.main-content-area:has(.chat-page) {
+  padding: 0;
+}
+.content-body {
+  padding-top: var(--spacing-2);
+  padding-right: var(--spacing-2);
+  padding-bottom: var(--spacing-8);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Remove padding when chat page is displayed */
+.content-body:has(.chat-page) {
+  padding: 0;
+}
+
+/* Custom Scrollbar for Main Content Area */
+.main-content-area::-webkit-scrollbar {
+  width: 6px;
+}
+.main-content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+.main-content-area::-webkit-scrollbar-thumb {
+  background: var(--md-outline-variant);
+  border-radius: var(--radius-full);
+}
+.main-content-area::-webkit-scrollbar-thumb:hover {
+  background: var(--md-outline);
+}
 
 /* Banner */
 .main-banner-content {
-  background-color: #E8F0FF;
-  height: 180px;
-  margin: 0 0 25px 0;
-  border-radius: 20px;
-  border: 1px solid #6B9BF6;
+  background: linear-gradient(135deg, var(--md-primary-container) 0%, #e3f2fd 100%);
+  min-height: 200px;
+  margin: 0 0 var(--spacing-6) 0;
+  border-radius: var(--radius-lg);
+  border: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8);
   box-sizing: border-box;
+  box-shadow: var(--elevation-1);
+  position: relative;
+  overflow: hidden;
+}
+.main-banner-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(40, 103, 228, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
 }
 .banner-text-content {
-  flex-basis: 60%;
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 .banner-text {
-  margin: 0 0 10px 0;
-  color: #333;
+  margin: 0 0 var(--spacing-2) 0;
+  color: var(--md-on-surface);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.3;
 }
 .banner-subtext {
   margin: 0;
-  color: #555;
+  color: var(--md-on-surface-variant);
   font-size: 1rem;
+  line-height: 1.5;
 }
 .banner-illustration-placeholder {
-  flex-basis: 35%;
-  height: 100%;
-  background-color: #e0e8f3;
-  border-radius: 10px;
+  width: 180px;
+  height: 160px;
+  background-color: var(--md-surface-container);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
-  color: #888;
+  font-size: var(--md-body-small-size);
+  color: var(--md-on-surface-variant);
+  flex-shrink: 0;
+  min-width: 180px;
 }
 .banner-illustration-placeholder img {
   width: 100%;
@@ -304,74 +378,75 @@ body {
 .action-icons-row-large {
   display: flex;
   justify-content: center;
-  gap: 25px;
-  margin: 25px 0;
+  gap: var(--spacing-4);
+  margin: var(--spacing-4) 0;
 }
 .action-button-container {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 15px 25px;
+  padding: var(--spacing-4) var(--spacing-6);
   width: auto;
-  border-radius: 20px;
-  background-color: #E8F0FF;
-  border: 1px solid #6B9BF6;
+  border-radius: var(--radius-lg);
+  background-color: var(--md-primary-container);
+  border: 1px solid var(--md-primary);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  transition: var(--transition-normal);
 }
 .action-button-container:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(107,155,246,0.3);
-  background-color: var(--background-blue-light);
+  box-shadow: var(--elevation-3);
+  background-color: var(--md-primary-container);
 }
-.action-button-container .action-button { 
-  background-color: transparent; 
-  padding: 0; 
-  box-shadow: none; 
-  border: none; 
+.action-button-container .action-button {
+  background-color: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
   margin-bottom: 0;
-  margin-right: 12px;
+  margin-right: var(--spacing-3);
   display: flex;
   align-items: center;
 }
-.action-button-container .label { font-size: 0.9rem; font-weight: 500; color: #333; }
+.action-button-container .label { font-size: var(--md-body-large-size); font-weight: var(--md-label-large-weight); color: var(--md-on-surface); }
 
 /* Tabs */
 .tab-selector {
   display: flex;
   justify-content: center;
-  margin-bottom: 25px;
-  gap: 40px;
+  margin-bottom: var(--spacing-8);
+  gap: var(--spacing-2);
   position: relative;
-  overflow: hidden;
-  padding-bottom: 5px;
+  background-color: var(--md-surface-container-highest);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-1);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 .tab-selector span {
-  padding: 10px 0;
+  padding: var(--spacing-3) var(--spacing-8);
   margin-right: 0;
-  font-size: 1.0rem;
-  font-weight: 600;
+  font-size: var(--md-label-large-size);
+  font-weight: var(--md-label-large-weight);
   cursor: pointer;
-  color: #999;
-  transition: color 0.2s ease;
+  color: var(--md-on-surface-variant);
+  transition: var(--transition-quick);
   position: relative;
 }
 .tab-selector span:hover {
-  color: #666;
+  color: var(--md-on-surface);
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-full);
 }
 .active-tab {
-  color: var(--primary-color) !important;
+  background-color: var(--md-primary) !important;
+  color: var(--md-on-primary) !important;
+  border-radius: var(--radius-full);
+  box-shadow: var(--elevation-2);
 }
 .active-tab::after {
-  content: '';
-  position: absolute;
-  left: 0;  /* (เปลี่ยนจาก 50% เป็น 0) */
-  bottom: -3px;
-  width: 100%; /* <-- **แก้ไขเป็น 100% (เท่าตัวอักษร)** */
-  height: 4px;
-  background-color: var(--primary-color);
-  border-radius: 2px;
-  transform: none; /* (เอา transform ออก เพราะเราเริ่มจาก left: 0) */
+  display: none;
   animation: underline-slide-in 0.3s ease-out forwards;
 }
 
@@ -387,98 +462,244 @@ body {
 }
 
 /* Doctor List */
-.doctor-list { padding-bottom: 50px; }
+.doctor-list { padding-bottom: var(--spacing-12); }
 .doctor-card {
-  display: flex;
-  align-items: center;
-  background-color: var(--card-blue-bg);
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: none;
-  margin-bottom: 15px;
-  border: 1px solid var(--border-color-light);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--spacing-6);
+  background-color: var(--md-surface);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: var(--spacing-5);
+  border: 1px solid rgba(40, 103, 228, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.doctor-card:active {
+  opacity: 0.95;
 }
 
+/* Left Column: Photo */
 .doctor-photo-placeholder {
-  background-color: #e0e8f3;
-  border-radius: 12px;
-  margin-right: 15px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 50%;
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(40, 103, 228, 0.2), 0 0 0 3px rgba(40, 103, 228, 0.1);
+  position: relative;
+  z-index: 1;
+  border: 2.5px solid var(--md-primary);
+  padding: var(--spacing-2);
 }
 
-.doctor-card .info-section { flex-grow: 1; }
-.info-section .name { font-weight: bold; font-size: 1rem; margin: 0 0 5px 0; }
-.info-section .specialty {
-  background-color: transparent;
-  color: #666;
-  padding: 0;
-  border-radius: 0;
-  font-size: 0.9rem;
-  font-weight: 400;
-  margin-bottom: 5px;
-  display: block;
-}
-.info-section .details { font-size: 0.9rem; color: #666; margin: 3px 0; }
-.info-section .accredited {
-  font-size: 0.8rem;
-  color: var(--primary-color);
-  margin-top: 10px;
-  border-top: 1px dashed #cdd7e8;
-  padding-top: 5px;
-}
-.price-section {
+/* Middle Column: Info */
+.doctor-card .info-section {
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-shrink: 0;
-  margin-left: 10px;
-  text-align: right;
-  height: 100%;
+  gap: var(--spacing-2);
 }
-.price-section .price { font-weight: bold; color: #28a745; font-size: 0.95rem; }
-.price-section .time { font-size: 0.8rem; color: #666; }
+.info-section .name {
+  font-weight: 700;
+  font-size: 19px;
+  margin: 0;
+  color: var(--md-on-surface);
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+}
+
+.info-section .specialty {
+  background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
+  color: var(--md-on-primary);
+  padding: 6px var(--spacing-4);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(40, 103, 228, 0.25);
+  align-self: flex-start;
+  text-transform: capitalize;
+  margin-bottom: var(--spacing-1);
+}
+
+.details-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.info-section .details {
+  font-size: 14px;
+  color: var(--md-on-surface-variant);
+  margin: 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 400;
+}
+
+.detail-icon {
+  opacity: 0.6;
+  flex-shrink: 0;
+  color: var(--md-primary);
+}
+
+.info-section .accredited {
+  font-size: 11px;
+  color: var(--md-tertiary-dark);
+  padding: 5px 12px;
+  background: linear-gradient(135deg, var(--md-tertiary-container) 0%, #e3f2fd 100%);
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  border: 1px solid var(--md-tertiary);
+  align-self: flex-start;
+  box-shadow: 0 1px 3px rgba(107, 155, 246, 0.2);
+  margin-top: var(--spacing-1);
+}
+/* Right Column: Price + Button */
+.price-action-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  align-self: stretch;
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+}
+
+.price-highlight-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.price-highlight-box .price {
+  font-weight: 700;
+  color: var(--md-success);
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.4px;
+}
+
+.price-highlight-box .time {
+  font-size: 13px;
+  color: var(--md-on-surface-variant);
+  line-height: 1.2;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.time-icon {
+  opacity: 0.6;
+  color: var(--md-on-surface-variant);
+}
 
 
 /* === (ข้อ 4) START: ระบบปุ่มใหม่ === */
 .btn {
   border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--md-label-large-size);
+  font-weight: var(--md-label-large-weight);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  transition: var(--transition-normal);
+  font-family: var(--md-font-family);
+  box-shadow: var(--elevation-1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.btn > * {
+  position: relative;
+  z-index: 2;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 .btn-primary {
-  background-color: var(--primary-color);
-  color: white;
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
 }
 .btn-primary:hover {
-  background-color: #5076c2;
+  background-color: var(--md-primary-dark);
+  box-shadow: var(--elevation-3);
+  transform: translateY(-2px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--elevation-1);
 }
 .btn-secondary {
-  background-color: #ffffff;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+  background-color: var(--md-surface);
+  color: var(--md-primary);
+  border: 2px solid var(--md-primary);
 }
 .btn-secondary:hover {
-  background-color: var(--background-blue-light);
+  background-color: var(--md-primary-container);
+  border-color: var(--md-primary-dark);
+  box-shadow: var(--elevation-2);
 }
 .btn-danger {
-  background-color: #d9534f;
-  color: white;
+  background-color: var(--md-error);
+  color: var(--md-on-error);
 }
 .btn-danger:hover {
-  background-color: #a94442;
+  background-color: var(--md-error-dark);
+  box-shadow: var(--elevation-3);
+  transform: translateY(-2px);
 }
+
+/* Book Button in Doctor Card */
+.btn-book {
+  min-width: 120px;
+  padding: 9px var(--spacing-5);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-dark) 100%);
+  box-shadow: 0 2px 6px rgba(40, 103, 228, 0.25);
+  letter-spacing: 0.2px;
+  border-radius: var(--radius-md);
+}
+.btn-book:hover {
+  background: linear-gradient(135deg, var(--md-primary-dark) 0%, #1e4fb3 100%);
+  box-shadow: 0 3px 10px rgba(40, 103, 228, 0.35);
+  transform: translateY(-1px);
+}
+
 /* === (ข้อ 4) END: ระบบปุ่มใหม่ === */
 
 
@@ -488,36 +709,36 @@ body {
 }
 .notification-count {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: #d9534f;
-  color: white;
-  border-radius: 50%;
+  top: var(--spacing-1);
+  right: var(--spacing-1);
+  background-color: var(--md-error);
+  color: var(--md-on-error);
+  border-radius: var(--radius-circle);
   width: 18px;
   height: 18px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: var(--md-label-small-size);
+  font-weight: var(--md-label-small-weight);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--primary-color);
+  border: 2px solid var(--md-primary);
 }
 .notification-dropdown {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
   pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0s linear 6s, transform 0.3s ease;
+  transition: var(--transition-normal);
 
   position: absolute;
   top: 110%;
   right: 0;
   width: 320px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  background-color: var(--md-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elevation-4);
   z-index: 100;
-  color: #333;
+  color: var(--md-on-surface);
   overflow: hidden;
 }
 .notification-bell-container:hover .notification-dropdown {
@@ -528,24 +749,24 @@ body {
   transition-delay: 0s;
 }
 .notification-item {
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 .notification-item:last-child {
   border-bottom: none;
 }
 .notification-item strong {
-  font-size: 0.9rem;
-  color: #333;
+  font-size: var(--md-body-large-size);
+  color: var(--md-on-surface);
 }
 .notification-item p {
-  font-size: 0.85rem;
-  color: #666;
-  margin: 4px 0 6px 0;
+  font-size: var(--md-body-medium-size);
+  color: var(--md-on-surface-variant);
+  margin: var(--spacing-1) 0 var(--spacing-2) 0;
 }
 .notification-item span {
-  font-size: 0.75rem;
-  color: var(--primary-color);
+  font-size: var(--md-body-small-size);
+  color: var(--md-primary);
 }
 
 /* === CSS Profile Dropdown (Language) (อัปเดต Hover) === */
@@ -554,19 +775,19 @@ body {
   visibility: hidden;
   transform: translateY(-10px);
   pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0s linear 6s, transform 0.3s ease;
-  
+  transition: var(--transition-normal);
+
   position: absolute;
   top: 110%;
   right: 0;
   width: 100px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  background-color: var(--md-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elevation-4);
   z-index: 100;
-  color: #333;
+  color: var(--md-on-surface);
   overflow: hidden;
-  padding: 5px;
+  padding: var(--spacing-1);
 }
 .profile-header-sm:hover .profile-dropdown {
   opacity: 1;
@@ -579,24 +800,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 12px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #333;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--md-body-large-size);
+  font-weight: var(--md-label-large-weight);
+  color: var(--md-on-surface);
+  border-radius: var(--radius-button);
+  transition: var(--transition-quick);
 }
 .language-item:hover {
-  background-color: var(--card-blue-bg);
+  background-color: var(--md-surface-container-highest);
 }
 .language-item.active-lang {
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: 600;
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  font-weight: var(--md-label-large-weight);
 }
 .language-item.active-lang:hover {
-  background-color: #5076c2;
-  color: white;
+  background-color: var(--md-primary-dark);
+  color: var(--md-on-primary);
 }
 
 
@@ -619,14 +840,14 @@ body {
 
 /* === Page Placeholder === */
 .page-placeholder {
-  padding: 20px;
+  padding: var(--spacing-5);
 }
 .page-placeholder h2 {
-  color: #333;
+  color: var(--md-on-surface);
 }
 .page-placeholder p {
-  color: #666;
-  font-size: 1rem;
+  color: var(--md-on-surface-variant);
+  font-size: var(--md-body-large-size);
 }
 
 /* === START: CSS ใหม่สำหรับหน้า Profile (อัปเดต) === */
@@ -635,15 +856,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .profile-section-card {
-  background-color: #E8F0FF;
-  border: 1px solid #6B9BF6;
-  border-radius: 20px;
-  padding: 20px 25px;
-  box-shadow: var(--box-shadow-light);
+  background-color: var(--md-primary-container);
+  border: 1px solid var(--md-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5) var(--spacing-6);
+  box-shadow: var(--elevation-1);
   box-sizing: border-box;
   position: relative;
   /* (ข้อ 1) เพิ่ม padding-bottom ให้ปุ่ม save */
@@ -658,33 +879,33 @@ body {
 /* (ยกเว้นบล็อก 2) */
 .profile-section-card:has(.profile-date-input-container) {
   width: auto;
-  padding-bottom: 20px; /* (คืนค่า padding) */
+  padding-bottom: var(--spacing-5); /* (คืนค่า padding) */
 }
 
 
 .profile-section-card h3 {
-  color: #333;
+  color: var(--md-on-surface);
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 .profile-section-card:has(.medical-history-text) h3,
 .profile-section-card:has(.profile-input-textarea) h3 {
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-2);
 }
 
 /* Section: Personal Info */
 .personal-info-box {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 
 .profile-avatar-placeholder {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  border: 2px solid var(--border-color-light);
+  border-radius: var(--radius-circle);
+  background-color: var(--md-surface);
+  border: 2px solid var(--md-outline-variant);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -695,7 +916,7 @@ body {
   line-height: 1.5;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-2);
   width: 100%;
 }
 
@@ -703,12 +924,12 @@ body {
 .profile-input-data {
   border: none;
   background-color: transparent;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
   width: 100%;
   box-sizing: border-box;
-  transition: background-color 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  transition: var(--transition-quick);
+  font-family: var(--md-font-family);
   resize: none;
   min-height: 30px;
   overflow: hidden;
@@ -717,41 +938,41 @@ body {
 .profile-input-specialty:focus,
 .profile-input-data:focus {
   outline: none;
-  background-color: #ffffff;
+  background-color: var(--md-surface);
 }
 .profile-input-name {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
+  font-size: var(--md-title-large-size);
+  font-weight: var(--md-title-large-weight);
+  color: var(--md-on-surface);
 }
 .profile-input-specialty {
   border: none;
   box-sizing: border-box;
-  transition: background-color 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  transition: var(--transition-quick);
+  font-family: var(--md-font-family);
   resize: none;
   min-height: 30px;
   overflow: hidden;
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: black;
-  background-color: #d8e2f8;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-button);
+  font-size: var(--md-body-large-size);
+  font-weight: var(--md-label-large-weight);
+  color: var(--md-on-surface);
+  background-color: var(--md-surface-container-high);
   width: fit-content;
 }
 .profile-input-specialty:focus {
-   background-color: #cdd8f5;
+   background-color: var(--md-surface-container-highest);
 }
 .profile-input-data {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: var(--md-body-large-size);
+  color: var(--md-on-surface-variant);
 }
 .profile-input-name::placeholder,
 .profile-input-specialty::placeholder,
 .profile-input-data::placeholder {
-  color: #777;
-  font-weight: 400;
+  color: var(--md-on-surface-variant);
+  font-weight: var(--md-body-large-weight);
 }
 
 /* Section: Date Input */
@@ -761,22 +982,22 @@ body {
 }
 .profile-date-input {
   width: 100%;
-  padding: 8px 15px;
-  padding-right: 40px; 
-  border-radius: 10px;
-  border: 1px solid #6B9BF6;
-  background-color: #ffffff;
-  font-size: 0.9rem;
-  color: #333;
+  padding: var(--spacing-2) var(--spacing-4);
+  padding-right: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--md-primary);
+  background-color: var(--md-surface);
+  font-size: var(--md-body-large-size);
+  color: var(--md-on-surface);
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--md-font-family);
 }
 .profile-date-input::placeholder {
-  color: #999;
+  color: var(--md-on-surface-variant);
 }
 .profile-date-icon {
   position: absolute;
-  right: 15px;
+  right: var(--spacing-4);
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
@@ -786,8 +1007,8 @@ body {
 /* (ลบ .medical-history-box ออกแล้ว) */
 .medical-history-text {
   margin: 0;
-  font-weight: 500;
-  color: #555;
+  font-weight: var(--md-label-large-weight);
+  color: var(--md-on-surface-variant);
   white-space: pre-wrap;
   flex-grow: 1;
   padding: 0;
@@ -797,13 +1018,13 @@ body {
   flex-grow: 1;
   border: none;
   background: transparent;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  color: #333;
+  font-family: var(--md-font-family);
+  font-size: var(--md-body-large-size);
+  color: var(--md-on-surface);
   resize: none;
   overflow: hidden;
   min-height: 40px;
-  padding: 8px 0;
+  padding: var(--spacing-2) 0;
   width: 100%;
 }
 .profile-input-textarea:focus {
@@ -820,43 +1041,43 @@ body {
   align-items: center;
   justify-content: center;
   opacity: 0.8;
-  transition: opacity 0.2s ease;
+  transition: var(--transition-quick);
   position: absolute;
-  bottom: 20px;
-  right: 25px;
+  bottom: var(--spacing-5);
+  right: var(--spacing-6);
 }
 .add-medical-history-btn:hover {
   opacity: 1;
 }
 .add-medical-history-btn svg {
-  filter: drop-shadow(0 2px 4px rgba(102,142,224,0.4));
+  filter: drop-shadow(0 2px 4px rgba(40, 103, 228, 0.4));
 }
 /* (ลบ .profile-save-button-container) */
 
 /* (ข้อ 1) เพิ่มปุ่ม Save (ติ๊กถูก) ในกรอบ */
 .profile-save-btn {
   /* ดีไซน์ */
-  background-color: #28a745;
-  color: white;
+  background-color: var(--md-success);
+  color: var(--md-on-success);
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   width: 48px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: var(--elevation-3);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-normal);
 
   /* ตำแหน่ง */
   position: absolute;
-  bottom: 15px;
-  right: 15px; 
+  bottom: var(--spacing-4);
+  right: var(--spacing-4);
 }
 .profile-save-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  box-shadow: var(--elevation-4);
 }
 /* (ย้ายปุ่ม + ใน Medical History ออกจากมุม) */
 .profile-section-card:has(.medical-history-text) .add-medical-history-btn,
@@ -864,97 +1085,97 @@ body {
   position: relative;
   bottom: auto;
   right: auto;
-  margin-left: 10px; /* (กลับไปเป็นแบบเดิม) */
+  margin-left: var(--spacing-2); /* (กลับไปเป็นแบบเดิม) */
 }
 
 
 /* === CSS ใหม่สำหรับหน้า Admin === */
 
 .admin-stats-header {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-5);
 }
 .stat-card-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: var(--spacing-5);
 }
 .stat-card {
-  background-color: var(--card-blue-bg);
-  border: 1px solid var(--border-color-light);
-  border-radius: 15px;
-  padding: 20px;
+  background-color: var(--md-surface-container-low);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-5);
   text-align: center;
-  box-shadow: var(--box-shadow-light);
+  box-shadow: var(--elevation-1);
 }
 .stat-card h3 {
-  margin: 10px 0 5px 0;
-  font-size: 2rem;
-  color: var(--primary-color);
+  margin: var(--spacing-2) 0 var(--spacing-1) 0;
+  font-size: var(--md-display-small-size);
+  color: var(--md-primary);
 }
 .stat-card p {
   margin: 0;
-  font-weight: 500;
-  color: #555;
+  font-weight: var(--md-label-large-weight);
+  color: var(--md-on-surface-variant);
 }
 .management-page-content {
-  padding: 10px;
+  padding: var(--spacing-2);
 }
 .management-page-content h2 {
-  color: #333;
+  color: var(--md-on-surface);
 }
 .management-page-content p {
-  color: #666;
-  font-size: 1rem;
-  margin-bottom: 25px;
+  color: var(--md-on-surface-variant);
+  font-size: var(--md-body-large-size);
+  margin-bottom: var(--spacing-6);
 }
 .management-table {
   width: 100%;
   border-collapse: collapse;
-  box-shadow: var(--box-shadow-light);
-  border-radius: 10px;
+  box-shadow: var(--elevation-1);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
-.management-table th, 
+.management-table th,
 .management-table td {
-  padding: 12px 15px;
+  padding: var(--spacing-3) var(--spacing-4);
   text-align: left;
-  border-bottom: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 .management-table th {
-  background-color: var(--card-blue-bg);
-  font-size: 0.9rem;
-  color: #333;
+  background-color: var(--md-surface-container-low);
+  font-size: var(--md-body-large-size);
+  color: var(--md-on-surface);
 }
 .management-table tr:nth-child(even) {
-  background-color: #fcfcfc;
+  background-color: var(--md-surface-container-lowest);
 }
 .management-table tbody tr.clickable-row {
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: var(--transition-quick);
 }
 .management-table tr:hover,
 .management-table tbody tr.clickable-row:hover {
-  background-color: var(--background-blue-light);
+  background-color: var(--md-primary-container);
 }
 .status-active, .status-pending {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.8rem;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-weight: var(--md-label-large-weight);
+  font-size: var(--md-label-small-size);
 }
 .status-active {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--md-success-container);
+  color: var(--md-on-success-container);
 }
 .status-pending {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--md-warning-container);
+  color: var(--md-on-warning-container);
 }
 
 .btn.btn-primary.btn-approve {
-  background-color: #28a745;
+  background-color: var(--md-success);
 }
 .btn.btn-primary.btn-approve:hover {
-  background-color: #218838;
+  background-color: var(--md-success-dark);
 }
 /* === END: CSS ใหม่สำหรับหน้า Admin === */

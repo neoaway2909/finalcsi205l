@@ -2,8 +2,43 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+
+    // Users Collection - ข้อมูลผู้ใช้
+    match /users/{userId} {
+      // อนุญาตให้อ่านได้ถ้า login แล้ว
+      allow read: if request.auth != null;
+
+      // อนุญาตให้สร้างบัญชีใหม่ได้ถ้า UID ตรงกับ Auth UID
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // อนุญาตให้แก้ไขได้เฉพาะบัญชีตัวเอง และห้ามแก้ไข role, uid, email
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email']);
+
+      // ห้ามลบบัญชีผู้ใช้ (ให้ Admin ทำผ่าน Admin SDK)
+      allow delete: if false;
+    }
+
+    // Appointments Collection - การนัดหมาย
+    match /appointments/{appointmentId} {
+      // ต้อง login ก่อนถึงจะอ่าน/เขียนได้
+      allow read, write: if request.auth != null;
+    }
+
+    // Notifications Collection - การแจ้งเตือน
+    match /notifications/{notificationId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Medical History Collection - ประวัติการรักษา
+    match /medical_history/{historyId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Messages Collection - ข้อความแชท
+    match /messages/{messageId} {
+      allow read, write: if request.auth != null;
     }
   }
 }

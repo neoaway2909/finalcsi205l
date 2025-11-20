@@ -58,7 +58,22 @@ export const translations = {
     backToHome: "กลับสู่หน้าหลัก",
     selectDateAndTime: "เลือกวันและเวลา",
     calendarPlaceholder: "ปฏิทินจะแสดงที่นี่",
-    confirmBooking: "ยืนยันการจอง"
+    confirmBooking: "ยืนยันการจอง",
+    now: "ตอนนี้เลย",
+    in30min: "ใน 30 นาที",
+    in1hour: "ใน 1 ชั่วโมง",
+    in2hours: "ใน 2 ชั่วโมง",
+    addMedicalHistory: "เพิ่มประวัติการรักษา",
+    diagnosis: "การวินิจฉัย",
+    prescription: "ยาที่จ่าย",
+    notes: "หมายเหตุ",
+    cancel: "ยกเลิก",
+    save: "บันทึก",
+    viewMedicalHistory: "ดูประวัติการรักษา",
+    patientName: "ชื่อคนไข้",
+    loading: "กำลังโหลด...",
+    noMedicalHistory: "ไม่มีประวัติการรักษา",
+    close: "ปิด"
   },
   en: {
     searchPlaceholder: "search for doctor, specialties",
@@ -119,6 +134,21 @@ export const translations = {
     backToHome: "Back to Home",
     selectDateAndTime: "Select Date and Time",
     calendarPlaceholder: "Calendar will be displayed here.",
-    confirmBooking: "Confirm Booking"
+    confirmBooking: "Confirm Booking",
+    now: "Now",
+    in30min: "In 30 minutes",
+    in1hour: "In 1 hour",
+    in2hours: "In 2 hours",
+    addMedicalHistory: "Add Medical History",
+    diagnosis: "Diagnosis",
+    prescription: "Prescription",
+    notes: "Notes",
+    cancel: "Cancel",
+    save: "Save",
+    viewMedicalHistory: "View Medical History",
+    patientName: "Patient Name",
+    loading: "Loading...",
+    noMedicalHistory: "No medical history available",
+    close: "Close"
   }
 };

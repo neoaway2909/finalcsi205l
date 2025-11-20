@@ -2,8 +2,10 @@ import React from 'react';
 import { FaUser } from 'react-icons/fa';
 import './PatientCard.css';
 
-const PatientCard = ({ patient, onAccept, onDecline }) => {
+const PatientCard = ({ appointment, onAddMedicalHistory, onComplete }) => {
+  const { patient, date, status } = appointment;
   const { name, age, gender, reason } = patient;
+  const isPast = new Date(date) < new Date();
 
   return (
     <div className="patient-card">
@@ -19,8 +21,12 @@ const PatientCard = ({ patient, onAccept, onDecline }) => {
         </div>
       </div>
       <div className="action-buttons">
-        <button className="btn btn-primary" onClick={() => onAccept(patient)}>Accept</button>
-        <button className="btn btn-danger-outline" onClick={() => onDecline(patient.id)}>Decline</button>
+        {!isPast && status === 'scheduled' && (
+          <button className="btn btn-success" onClick={() => onComplete(appointment.id)}>Complete</button>
+        )}
+        {isPast && status === 'completed' && (
+          <button className="btn btn-primary" onClick={() => onAddMedicalHistory(appointment)}>Add Medical History</button>
+        )}
       </div>
     </div>
   );

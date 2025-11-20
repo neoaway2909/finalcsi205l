@@ -4,49 +4,13 @@ import { auth, db } from '../firebase';
 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
-import { doc, getDoc, setDoc } from 'firebase/firestore'; 
+import { doc, getDoc } from 'firebase/firestore'; 
 
 
 
-// --- ฟังก์ชัน Helper (คงเดิม) ---
-
-const createDefaultProfile = async (user, currentRole = 'patient') => {
-
-    const userRef = doc(db, 'users', user.uid);
-
-    try {
-
-        await setDoc(userRef, {
-
-            uid: user.uid,
-
-            email: user.email,
-
-            displayName: user.displayName || user.email.split('@')[0],
-
-            role: currentRole,
-
-            createdAt: new Date(),
-
-            lastLogin: new Date(),
-
-        }, { merge: true });
-
-        console.log("Profile auto-created by Hook for UID:", user.uid);
-
-        // คืนค่าข้อมูลโปรไฟล์ที่สร้างขึ้นมา
-
-        return { uid: user.uid, email: user.email, displayName: user.displayName || user.email.split('@')[0], role: currentRole, createdAt: new Date() };
-
-    } catch (error) {
-
-        console.error("Error auto-creating profile in useAuth:", error);
-
-        return null;
-
-    }
-
-}
+// --- ฟังก์ชัน Helper (ลบการสร้าง Profile อัตโนมัติออก) ---
+// ไม่มีการสร้าง Default Profile ใน Hook แล้ว
+// ให้ AuthPage.jsx เป็นผู้จัดการเรื่อง Role ทั้งหมด
 
 
 
@@ -54,7 +18,7 @@ const createDefaultProfile = async (user, currentRole = 'patient') => {
 
 const useAuth = () => {
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined); // เปลี่ยนจาก null เป็น undefined
 
   const [userProfile, setUserProfile] = useState(null);
 
@@ -72,11 +36,8 @@ const useAuth = () => {
 
       setUser(currentUser);
 
-      // ถ้าไม่มี user ให้ตั้งค่า ready ทันที
-      if (!currentUser) {
-        setIsAuthReady(true);
-        setLoading(false);
-      }
+      // Don't set isAuthReady here - let useEffect 2 handle it
+      // This prevents the flash of login page while Firebase is checking persistence
 
     });
 
@@ -94,7 +55,7 @@ const useAuth = () => {
 
   useEffect(() => {
 
-    
+
 
     // 2. สร้างฟังก์ชัน fetchUserRole *ข้างใน* useEffect
 
@@ -108,7 +69,7 @@ const useAuth = () => {
 
         const userRef = doc(db, 'users', uid);
 
-        const docSnap = await getDoc(userRef); 
+        const docSnap = await getDoc(userRef);
 
 
 
@@ -120,23 +81,16 @@ const useAuth = () => {
 
         } else {
 
-          // หากไม่พบโปรไฟล์ ให้สร้างให้อัตโนมัติเป็น 'patient'
+          // ไม่พบโปรไฟล์ → ให้ Sign Out และแจ้งเตือน
+          // AuthPage.jsx จะต้องสร้าง Profile ก่อนที่ผู้ใช้จะ Login สำเร็จ
+          console.error("Profile not found for UID:", uid);
+          console.error("User must complete role selection before accessing the app");
 
-          const newProfile = await createDefaultProfile(user, 'patient'); 
+          setUserProfile(null);
+          await signOut(auth);
 
-          
-
-          if (newProfile) {
-
-              setUserProfile(newProfile);
-
-          } else {
-
-              // ถ้าสร้างไม่สำเร็จ (เช่น Security Rules บล็อก Create)
-
-              await signOut(auth);
-
-          }
+          // แจ้งเตือนผู้ใช้
+          alert("ไม่พบข้อมูลบัญชีของคุณ กรุณาสมัครสมาชิกใหม่อีกครั้ง");
 
         }
 
@@ -146,11 +100,11 @@ const useAuth = () => {
 
         setUserProfile(null);
 
-        
+
 
         if (error.code === 'permission-denied' || error.code === 'unavailable') {
 
-             await signOut(auth); 
+             await signOut(auth);
 
         }
 
@@ -172,21 +126,33 @@ const useAuth = () => {
 
     // 5. Logic การเรียกใช้
 
-    if (user && user.uid) { 
+    // undefined = Firebase กำลังตรวจสอบ persistence (ยังไม่รู้)
 
-        // ถ้ามี user (Login) -> ให้ไปดึง Profile
+    // null = ไม่มี user (logout แล้ว)
 
-        fetchUserRole(user.uid);
+    // user object = มี user login อยู่
 
-    } else {
+    if (user === undefined) {
 
-        // ถ้าไม่มี user (Logout) -> ตั้งค่าให้พร้อมเลย
+        // Firebase กำลังตรวจสอบ persistence -> รอก่อน ไม่ต้องทำอะไร
+
+        return;
+
+    } else if (user === null) {
+
+        // User ไม่ได้ login จริง ๆ -> ตั้งค่าให้พร้อมเลย
 
         setUserProfile(null);
 
         setIsAuthReady(true);
 
-        setLoading(false); // (กันไว้)
+        setLoading(false);
+
+    } else if (user && user.uid) {
+
+        // ถ้ามี user (Login) -> ให้ไปดึง Profile
+
+        fetchUserRole(user.uid);
 
     }
 

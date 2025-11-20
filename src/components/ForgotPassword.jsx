@@ -41,55 +41,42 @@ const ForgotPassword = ({ onBackToLogin }) => {
   };
 
   return (
-    <div
-      className="login-form-card"
-      style={{
-        marginLeft: "0px",
-        background: "white",
-        marginTop: "0px",
-        marginBottom: "60px",
-        width: "85%",
-      }}
-    >
-      <h2 style={{ textAlign: "center", color: "#333" }}>ลืมรหัสผ่าน?</h2>
-      <p style={{ textAlign: "center", color: "#666", marginBottom: "20px" }}>
-        กรอกอีเมลที่คุณใช้สมัครสมาชิก เพื่อรับลิงก์สำหรับรีเซ็ตรหัสผ่าน
-      </p>
+    <div className="forgot-password-container">
+      <div className="forgot-password-card">
+        <h2 className="forgot-password-title">ลืมรหัสผ่าน?</h2>
+        <p className="forgot-password-subtitle">
+          กรอกอีเมลที่คุณใช้สมัครสมาชิก
+          <br />
+          เพื่อรับลิงก์สำหรับรีเซ็ตรหัสผ่าน
+        </p>
 
-      <form onSubmit={handleSubmit} className="form-fields">
-        <div className="input-group">
-          <FaEnvelope className="input-icon" />
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="input-field"
-            disabled={loading}
-          />
+        <form onSubmit={handleSubmit} className="form-fields">
+          <div className="input-group">
+            <FaEnvelope className="input-icon" />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+              disabled={loading}
+            />
+          </div>
+
+          {error && <p className="error-message">{error}</p>}
+          {message && <p className="success-message">{message}</p>}
+
+          <button type="submit" className="login-main-button" disabled={loading}>
+            {loading ? "กำลังส่ง..." : "ส่งลิงก์รีเซ็ต"}
+          </button>
+        </form>
+
+        <div className="back-to-login">
+          <a href="#" onClick={onBackToLogin}>
+            ย้อนกลับไปหน้าล็อกอิน
+          </a>
         </div>
-
-        {error && <p className="error-message">{error}</p>}
-        {message && (
-          <p className="success-message" style={{ color: "green" }}>
-            {message}
-          </p>
-        )}
-
-        <button type="submit" className="login-main-button" disabled={loading}>
-          {loading ? "กำลังส่ง..." : "ส่งลิงก์รีเซ็ต"}
-        </button>
-      </form>
-
-      <div style={{ textAlign: "center", marginTop: "15px" }}>
-        <a
-          href="#"
-          onClick={onBackToLogin}
-          style={{ color: "#666", textDecoration: "none" }}
-        >
-          ย้อนกลับไปหน้าล็อกอิน
-        </a>
       </div>
     </div>
   );
