@@ -8,11 +8,19 @@ const BookingSuccessPage = ({ doctor, appointment, onDone }) => {
   }
 
   const { date, time } = appointment;
-  const formattedDate = date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+
+  // Ensure date is a valid Date object
+  let formattedDate = 'N/A';
+  if (date) {
+    const dateObj = date instanceof Date ? date : new Date(date);
+    if (!isNaN(dateObj.getTime())) {
+      formattedDate = dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+  }
 
   return (
     <div className="booking-success-page">
