@@ -1,0 +1,247 @@
+.appointments-page-container {
+  padding: 20px;
+  animation: fade-in 0.5s ease-out;
+}
+
+.page-header {
+  margin-bottom: 25px;
+}
+.page-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+.page-header p {
+  color: #666;
+  margin: 0;
+}
+
+/* --- Tabs (ปรับปรุงให้ไม่ชนกับ Global) --- */
+.appt-tab-selector {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.appt-tab {
+  background: none;
+  border: none;
+  padding: 12px 5px;
+  font-size: 1rem;
+  color: #999;
+  cursor: pointer;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.appt-tab:hover {
+  color: #666;
+}
+
+.appt-tab.active {
+  color: var(--primary-color, #668ee0);
+}
+
+/* เส้นขีดใต้แบบเคลื่อนไหว (Optional) */
+.appt-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color, #668ee0);
+  border-radius: 3px 3px 0 0;
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* --- Appointment List --- */
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Appointment Card --- */
+.appointment-item-card {
+  background-color: #fff;
+  border: 1px solid #e0e8f3;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.appointment-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* Date Badge (วันที่ด้านซ้าย) */
+.appt-date-badge {
+  background-color: #f0f7ff;
+  border-radius: 12px;
+  padding: 10px 15px;
+  text-align: center;
+  min-width: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--primary-color, #668ee0);
+}
+.appt-date-badge .day {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+.appt-date-badge .month {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Content (ข้อมูลตรงกลาง) */
+.appt-content {
+  flex-grow: 1;
+}
+
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.appt-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e8f3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #888;
+}
+.appt-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.doctor-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+.specialty-badge {
+  font-size: 0.8rem;
+  color: var(--primary-color, #668ee0);
+  background-color: #d8e2f8;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.appt-details-grid {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  font-size: 0.9rem;
+}
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-row .icon {
+  color: #999;
+}
+
+/* Action Side (ขวาสุด) */
+.appt-action-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.status-pill {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+.status-pill.confirmed { background-color: #d4edda; color: #155724; }
+.status-pill.completed { background-color: #e2e3e5; color: #383d41; }
+.status-pill.cancelled { background-color: #f8d7da; color: #721c24; }
+.status-pill.pending { background-color: #fff3cd; color: #856404; }
+
+/* Buttons */
+.btn-outline-danger {
+  background: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-outline-primary {
+  background: transparent;
+  border: 1px solid var(--primary-color, #668ee0);
+  color: var(--primary-color, #668ee0);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-outline-primary:hover {
+  background-color: var(--primary-color, #668ee0);
+  color: white;
+}
+
+/* Empty State */
+.empty-appt {
+  text-align: center;
+  padding: 50px 20px;
+  color: #999;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  border: 2px dashed #e0e0e0;
+}
+.empty-appt p {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
