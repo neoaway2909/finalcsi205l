@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { translations } from "../../constants/translations";
-import PatientCard from "../../components/common/PatientCard";
-import { EmptyState } from "../../components/common";
+import { translations } from "../constants/translations";
+import { PatientCard, EmptyState, MedicalHistoryModal, ViewMedicalHistoryModal } from "../components/CommonComponents";
 import { FaUsers, FaClipboardList } from "react-icons/fa";
 import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
-import useAuth from '../../hooks/useAuth';
-import { addMedicalHistory, updateAppointmentStatus } from '../../firebase';
-import MedicalHistoryModal from '../../components/common/MedicalHistoryModal';
-import ViewMedicalHistoryModal from '../../components/common/ViewMedicalHistoryModal';
-import { Badge } from "../../components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/tabs";
+import useAuth from '../hooks/useAuth';
+import { addMedicalHistory, updateAppointmentStatus } from '../firebase';
+import { Badge, Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui";
 
 export const QueuePage = ({ lang, db }) => {
   const [appointments, setAppointments] = useState([]);

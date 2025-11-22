@@ -9,7 +9,7 @@ import {
   AdminDashboard,
 } from "./components/Dashboards"; // Import Dashboards ทั้ง 3 ตัว
 import { db } from "./firebase"; // Import db
-import LoadingScreen from "./components/common/LoadingScreen";
+import { LoadingScreen } from "./components/CommonComponents";
 
 function App() {
   const { user, userProfile, isAuthReady, loading, logout } = useAuth();

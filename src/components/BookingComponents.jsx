@@ -1,6 +1,36 @@
 import React, { useMemo, useCallback } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { translations } from '../../constants/translations';
+import { FaChevronLeft, FaChevronRight, FaUser } from 'react-icons/fa';
+import { translations } from '../constants/translations';
+
+// ==================== DoctorProfileHeader ====================
+
+/**
+ * Doctor Profile Header Component
+ * Displays doctor's basic information in booking page
+ *
+ * @param {Object} doctor - Doctor information
+ * @param {string} doctor.name - Doctor's name
+ * @param {string} doctor.specialty - Doctor's specialty
+ * @param {string} doctor.hospital - Doctor's hospital
+ */
+export const DoctorProfileHeader = ({ doctor }) => {
+  if (!doctor) return null;
+
+  return (
+    <div className="doctor-profile-header">
+      <div className="doctor-photo-placeholder">
+        <FaUser size={48} color="#c0d1f0" />
+      </div>
+      <div className="info-section">
+        <h2 className="name">{doctor.name}</h2>
+        <p className="specialty">{doctor.specialty}</p>
+        <p className="details">{doctor.hospital}</p>
+      </div>
+    </div>
+  );
+};
+
+// ==================== CalendarPicker ====================
 
 /**
  * Calendar Picker Component
@@ -106,6 +136,57 @@ export const CalendarPicker = ({
             {day.date}
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+// ==================== TimeSlotPicker ====================
+
+/**
+ * Time Slot Picker Component
+ * Allows users to select a time slot for appointments
+ *
+ * @param {Array} timeSlots - Available time slots (strings or objects with label/value)
+ * @param {string} selectedTime - Currently selected time
+ * @param {Function} onTimeSelect - Callback when time is selected
+ * @param {Object} bookedSlots - Object mapping time slots to booked status
+ * @param {boolean} isInstantAppointment - Whether this is an instant appointment
+ * @param {string} lang - Language ('th' or 'en')
+ */
+export const TimeSlotPicker = ({
+  timeSlots,
+  selectedTime,
+  onTimeSelect,
+  bookedSlots = {},
+  isInstantAppointment = false,
+  lang = 'th'
+}) => {
+  if (!timeSlots || timeSlots.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="booking-time-container">
+      <h3>{translations[lang].selectTime}</h3>
+      <div className="time-slots-grid">
+        {timeSlots.map(time => {
+          const timeValue = typeof time === 'object' ? time.value : time;
+          const timeLabel = typeof time === 'object' ? time.label : time;
+          const isBooked = !isInstantAppointment && bookedSlots[timeValue];
+
+          return (
+            <div
+              key={timeValue}
+              className={`time-slot ${selectedTime === timeValue ? 'selected' : ''} ${isBooked ? 'booked' : ''}`}
+              onClick={() => !isBooked && onTimeSelect(timeValue)}
+              title={isBooked ? 'เวลานี้เต็มแล้ว' : ''}
+            >
+              {timeLabel}
+              {isBooked && <span className="booked-badge">เต็ม</span>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

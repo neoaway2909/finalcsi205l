@@ -10,12 +10,447 @@ import {
   doc,
   getDoc,
 } from "../firebase";
+import { FaUser, FaLock, FaUserMd, FaUserTie, FaCheck, FaFacebookF, FaGoogle, FaLine, FaEnvelope } from 'react-icons/fa';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import "./AuthPage.css";
-import ForgotPassword from "./ForgotPassword";
-import RoleSelectionModal from "./RoleSelectionModal";
-import { LoginFormFields } from "./auth/LoginFormFields";
-import { RegisterFormFields } from "./auth/RegisterFormFields";
-import { SocialLoginButtons } from "./auth/SocialLoginButtons";
+
+// --- Internal Auth Components ---
+
+/**
+ * Forgot Password Component
+ * Displays form to send password reset email
+ */
+const ForgotPassword = ({ onBackToLogin }) => {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const authInstance = getAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    setLoading(true);
+
+    try {
+      await sendPasswordResetEmail(authInstance, email);
+      setMessage(
+        `ได้ส่งลิงก์รีเซ็ตรหัสผ่านไปยังอีเมล ${email} แล้ว กรุณาตรวจสอบอีเมล`
+      );
+      setEmail("");
+    } catch (err) {
+      console.error("Password Reset Error:", err.code);
+      if (err.code === "auth/user-not-found") {
+        setError("ไม่พบผู้ใช้ด้วยอีเมลนี้");
+      } else if (err.code === "auth/invalid-email") {
+        setError("รูปแบบอีเมลไม่ถูกต้อง");
+      } else {
+        setError("เกิดข้อผิดพลาดในการส่งลิงก์รีเซ็ต");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="forgot-password-container">
+      <div className="forgot-password-card">
+        <h2 className="forgot-password-title">ลืมรหัสผ่าน?</h2>
+        <p className="forgot-password-subtitle">
+          กรอกอีเมลที่คุณใช้สมัครสมาชิก
+          <br />
+          เพื่อรับลิงก์สำหรับรีเซ็ตรหัสผ่าน
+        </p>
+
+        <form onSubmit={handleSubmit} className="form-fields">
+          <div className="input-group">
+            <FaEnvelope className="input-icon" />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input-field"
+              disabled={loading}
+            />
+          </div>
+
+          {error && <p className="error-message">{error}</p>}
+          {message && <p className="success-message">{message}</p>}
+
+          <button type="submit" className="login-main-button" disabled={loading}>
+            {loading ? "กำลังส่ง..." : "ส่งลิงก์รีเซ็ต"}
+          </button>
+        </form>
+
+        <div className="back-to-login">
+          <a href="#" onClick={onBackToLogin}>
+            ย้อนกลับไปหน้าล็อกอิน
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Role Selection Modal Component
+ * Displays modal for selecting user role (patient, doctor, admin)
+ */
+const RoleSelectionModal = ({ onRoleSelect, onCancel }) => {
+  const [selectedRole, setSelectedRole] = useState("patient");
+
+  const handleConfirm = () => {
+    onRoleSelect(selectedRole);
+  };
+
+  const roles = [
+    {
+      icon: FaUser,
+      title: "คนไข้",
+      role: "patient",
+      color: "border-blue-500 bg-blue-50 text-blue-600",
+      hoverColor: "hover:border-blue-500 hover:bg-blue-50/50",
+      iconColor: "text-blue-500"
+    },
+    {
+      icon: FaUserMd,
+      title: "แพทย์",
+      role: "doctor",
+      color: "border-green-500 bg-green-50 text-green-600",
+      hoverColor: "hover:border-green-500 hover:bg-green-50/50",
+      iconColor: "text-green-500"
+    },
+    {
+      icon: FaUserTie,
+      title: "แอดมิน",
+      role: "admin",
+      color: "border-yellow-500 bg-yellow-50 text-yellow-600",
+      hoverColor: "hover:border-yellow-500 hover:bg-yellow-50/50",
+      iconColor: "text-yellow-500"
+    }
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+      style={{ animation: 'fadeIn 0.2s ease-in-out' }}
+    >
+      <div
+        className="bg-white rounded-2xl p-8 w-[90%] max-w-2xl shadow-2xl"
+        style={{ animation: 'slideUp 0.3s ease-out' }}
+      >
+        <div className="text-center mb-8 space-y-3">
+          <h2 className="text-2xl font-bold text-gray-900">เลือกบทบาทของคุณ</h2>
+          <p className="text-base text-gray-600">กรุณาเลือกว่าคุณต้องการเข้าใช้งานในฐานะใด</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 py-6">
+          {roles.map((roleItem) => {
+            const RoleIcon = roleItem.icon;
+            const isSelected = selectedRole === roleItem.role;
+            return (
+              <button
+                key={roleItem.role}
+                onClick={() => setSelectedRole(roleItem.role)}
+                className={`relative flex flex-col items-center justify-center gap-4 p-6 rounded-lg border-2 transition-all duration-200 ${
+                  isSelected
+                    ? roleItem.color
+                    : `border-gray-200 bg-white hover:shadow-md ${roleItem.hoverColor}`
+                }`}
+              >
+                <RoleIcon
+                  size={40}
+                  className={isSelected ? roleItem.iconColor : "text-gray-400"}
+                />
+                <p className={`font-medium text-lg ${isSelected ? "" : "text-gray-600"}`}>
+                  {roleItem.title}
+                </p>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 rounded-full bg-white p-1 shadow-sm">
+                    <FaCheck size={16} className={roleItem.iconColor} />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex gap-4 justify-end">
+          {onCancel && (
+            <button
+              onClick={onCancel}
+              className="px-8 py-3 rounded-lg font-semibold transition-all bg-gray-100 text-gray-600 hover:bg-gray-200"
+            >
+              ยกเลิก
+            </button>
+          )}
+          <button
+            onClick={handleConfirm}
+            className="min-w-[120px] px-8 py-3 rounded-lg font-semibold transition-all text-white hover:-translate-y-0.5 hover:shadow-lg"
+            style={{
+              background: 'linear-gradient(135deg, #6b9bf6 0%, #5a8de5 100%)',
+              boxShadow: '0 4px 12px rgba(107, 155, 246, 0.4)'
+            }}
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// --- Internal Auth Components ---
+
+/**
+ * Login Form Fields Component
+ * Displays email and password input fields for login
+ */
+const LoginFormFields = ({
+  email,
+  password,
+  onEmailChange,
+  onPasswordChange,
+  onSubmit,
+  onForgotPassword,
+  error,
+  loading = false
+}) => {
+  return (
+    <form onSubmit={onSubmit}>
+      <div className="input-group">
+        <FaUser className="input-icon" />
+        <input
+          type="email"
+          placeholder="Email (ใช้แทน Username)"
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          required
+          disabled={loading}
+          className="input-field"
+        />
+      </div>
+
+      <div className="input-group" style={{ marginTop: '16px' }}>
+        <FaLock className="input-icon" />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => onPasswordChange(e.target.value)}
+          required
+          disabled={loading}
+          className="input-field"
+        />
+      </div>
+
+      <div className="forgot-password">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onForgotPassword();
+          }}
+        >
+          Forgot password
+        </a>
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      <button type="submit" className="login-main-button" disabled={loading}>
+        {loading ? "กำลังดำเนินการ..." : "Log in"}
+      </button>
+    </form>
+  );
+};
+
+/**
+ * Register Form Fields Component
+ * Displays registration form with role selection, email, password, and confirm password
+ */
+const RegisterFormFields = ({
+  email,
+  password,
+  confirmPassword,
+  selectedRole = 'patient',
+  onEmailChange,
+  onPasswordChange,
+  onConfirmPasswordChange,
+  onRoleSelect,
+  onSubmit,
+  error,
+  loading = false
+}) => {
+  const checkmarkStyle = {
+    position: "absolute",
+    top: "8px",
+    right: "8px",
+    background: "white",
+    borderRadius: "50%",
+    padding: "3px"
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <p className="signup-subtitle">โปรดเลือกบทบาทที่คุณต้องการสมัคร:</p>
+
+      <div className="role-options-container">
+        <button
+          type="button"
+          onClick={() => onRoleSelect("patient")}
+          className={`role-option-button ${selectedRole === "patient" ? "selected-patient" : ""}`}
+        >
+          <FaUser size={28} color={selectedRole === "patient" ? "#2867e4" : "#999"} />
+          <p className="role-title">คนไข้</p>
+          {selectedRole === "patient" && (
+            <div style={checkmarkStyle}>
+              <FaCheck size={12} color="#2867e4" />
+            </div>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onRoleSelect("doctor")}
+          className={`role-option-button ${selectedRole === "doctor" ? "selected-doctor" : ""}`}
+        >
+          <FaUserMd size={28} color={selectedRole === "doctor" ? "#10a37f" : "#999"} />
+          <p className="role-title">แพทย์</p>
+          {selectedRole === "doctor" && (
+            <div style={checkmarkStyle}>
+              <FaCheck size={12} color="#10a37f" />
+            </div>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onRoleSelect("admin")}
+          className={`role-option-button ${selectedRole === "admin" ? "selected-admin" : ""}`}
+        >
+          <FaUserTie size={28} color={selectedRole === "admin" ? "#f59e0b" : "#999"} />
+          <p className="role-title">แอดมิน</p>
+          {selectedRole === "admin" && (
+            <div style={checkmarkStyle}>
+              <FaCheck size={12} color="#f59e0b" />
+            </div>
+          )}
+        </button>
+      </div>
+
+      <div className="input-group">
+        <FaUser className="input-icon" />
+        <input
+          type="email"
+          placeholder="Email (ใช้แทน Username)"
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          required
+          disabled={loading}
+          className="input-field"
+        />
+      </div>
+
+      <div className="input-group" style={{ marginTop: '16px' }}>
+        <FaLock className="input-icon" />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => onPasswordChange(e.target.value)}
+          required
+          disabled={loading}
+          className="input-field"
+        />
+      </div>
+
+      <div className="input-group" style={{ marginTop: '16px' }}>
+        <FaLock className="input-icon" />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => onConfirmPasswordChange(e.target.value)}
+          required
+          disabled={loading}
+          className="input-field"
+        />
+      </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      <button type="submit" className="login-main-button" disabled={loading}>
+        {loading ? "กำลังสร้างบัญชี..." : "สร้างบัญชี"}
+      </button>
+    </form>
+  );
+};
+
+/**
+ * Social Login Buttons Component
+ * Displays social login options (Facebook, Google, Line)
+ */
+const SocialLoginButtons = ({
+  onGoogleLogin,
+  onFacebookLogin,
+  onLineLogin,
+  loading = false
+}) => {
+  return (
+    <>
+      <div className="separator">or</div>
+
+      <div className="social-logins">
+        <button
+          type="button"
+          onClick={onFacebookLogin}
+          disabled={loading}
+          className="social-button facebook"
+        >
+          <FaFacebookF />
+        </button>
+        <button
+          type="button"
+          onClick={onGoogleLogin}
+          disabled={loading}
+          className="social-button google"
+        >
+          <FaGoogle />
+        </button>
+        <button
+          type="button"
+          onClick={onLineLogin}
+          disabled={loading}
+          className="social-button line"
+        >
+          <FaLine />
+        </button>
+      </div>
+    </>
+  );
+};
 
 // --- Firestore Helper: Save user to Firestore ---
 const saveUserToFirestore = async (user, newRole = null) => {
