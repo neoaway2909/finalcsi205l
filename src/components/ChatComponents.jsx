@@ -1,23 +1,40 @@
-import { useState, useRef, useEffect } from 'react';
-import { FaTimes, FaPaperPlane, FaRobot, FaUser, FaCircle, FaArrowLeft } from 'react-icons/fa';
-import { collection, query, where, onSnapshot, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';
+import { useState, useRef, useEffect } from "react";
+import {
+  FaTimes,
+  FaPaperPlane,
+  FaRobot,
+  FaUser,
+  FaCircle,
+  FaArrowLeft,
+} from "react-icons/fa";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  addDoc,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 
 // ==================== AIChatModal ====================
 export const AIChatModal = ({ isOpen, onClose, lang }) => {
   const [messages, setMessages] = useState([
     {
-      role: 'assistant',
-      content: lang === 'th'
-        ? 'สวัสดีครับ! ผมคือ AI Assistant ที่พร้อมช่วยเหลือคุณเกี่ยวกับเรื่องสุขภาพ มีอะไรให้ช่วยไหมครับ?'
-        : 'Hello! I am an AI Assistant ready to help you with health-related questions. How can I help you?'
-    }
+      role: "assistant",
+      content:
+        lang === "th"
+          ? "สวัสดีครับ! ผมคือ AI Assistant ที่พร้อมช่วยเหลือคุณเกี่ยวกับเรื่องสุขภาพ มีอะไรให้ช่วยไหมครับ?"
+          : "Hello! I am an AI Assistant ready to help you with health-related questions. How can I help you?",
+    },
   ]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -28,51 +45,55 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = inputMessage.trim();
-    setInputMessage('');
+    setInputMessage("");
 
     // Add user message
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
 
     try {
       // Call Google Gemini API with conversation history
-      const API_KEY = '';
+      const API_KEY = "AIzaSyAJ-1S_c-5dAmHFyjFPWcdIEyGBF1pG6v0";
 
       // Build conversation history for context
       const conversationHistory = messages
-        .filter(msg => msg.role !== 'assistant' || msg.content) // Filter out empty messages
-        .map(msg => ({
-          role: msg.role === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.content }]
+        .filter((msg) => msg.role !== "assistant" || msg.content) // Filter out empty messages
+        .map((msg) => ({
+          role: msg.role === "user" ? "user" : "model",
+          parts: [{ text: msg.content }],
         }));
 
       // Add current user message
       conversationHistory.push({
-        role: 'user',
-        parts: [{ text: userMessage }]
+        role: "user",
+        parts: [{ text: userMessage }],
       });
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             contents: conversationHistory,
             systemInstruction: {
-              parts: [{
-                text: `You are a helpful medical AI assistant for a healthcare appointment system. Answer in ${lang === 'th' ? 'Thai' : 'English'}. Keep responses brief (2-3 sentences).`
-              }]
+              parts: [
+                {
+                  text: `You are a helpful medical AI assistant for a healthcare appointment system. Answer in ${
+                    lang === "th" ? "Thai" : "English"
+                  }. Keep responses brief (2-3 sentences).`,
+                },
+              ],
             },
             generationConfig: {
               temperature: 0.7,
               topK: 40,
               topP: 0.95,
               maxOutputTokens: 300,
-            }
-          })
+            },
+          }),
         }
       );
 
@@ -80,28 +101,35 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
 
       if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
         const aiResponse = data.candidates[0].content.parts[0].text;
-        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: aiResponse },
+        ]);
       } else if (data.error) {
-        console.error('API Error:', data.error);
-        throw new Error(data.error.message || 'API Error');
+        console.error("API Error:", data.error);
+        throw new Error(data.error.message || "API Error");
       } else {
-        throw new Error('Invalid response from AI');
+        throw new Error("Invalid response from AI");
       }
     } catch (error) {
-      console.error('Error calling AI:', error);
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: lang === 'th'
-          ? 'ขอโทษครับ เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง หรือติดต่อทีมงานเพื่อขอความช่วยเหลือครับ'
-          : 'Sorry, there was an error connecting to the AI. Please try again or contact support for assistance.'
-      }]);
+      console.error("Error calling AI:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            lang === "th"
+              ? "ขอโทษครับ เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองใหม่อีกครั้ง หรือติดต่อทีมงานเพื่อขอความช่วยเหลือครับ"
+              : "Sorry, there was an error connecting to the AI. Please try again or contact support for assistance.",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -125,8 +153,12 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
               <FaRobot size={24} />
             </div>
             <div>
-              <h3 className="m-0 text-lg font-semibold">{lang === 'th' ? 'AI Assistant' : 'AI Assistant'}</h3>
-              <span className="text-sm opacity-90">{lang === 'th' ? 'พร้อมให้บริการ' : 'Ready to help'}</span>
+              <h3 className="m-0 text-lg font-semibold">
+                {lang === "th" ? "AI Assistant" : "AI Assistant"}
+              </h3>
+              <span className="text-sm opacity-90">
+                {lang === "th" ? "พร้อมให้บริการ" : "Ready to help"}
+              </span>
             </div>
           </div>
           <button
@@ -142,19 +174,25 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex gap-3 animate-[fadeIn_0.3s_ease-in] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              className={`flex gap-3 animate-[fadeIn_0.3s_ease-in] ${
+                msg.role === "user" ? "flex-row-reverse" : ""
+              }`}
             >
-              {msg.role === 'assistant' && (
+              {msg.role === "assistant" && (
                 <div className="w-9 h-9 bg-[hsl(var(--primary)/0.1)] rounded-full flex items-center justify-center text-[hsl(var(--primary))] shrink-0">
                   <FaRobot size={20} />
                 </div>
               )}
-              <div className={`max-w-[75%] px-[1.125rem] py-[0.875rem] rounded-2xl break-words ${
-                msg.role === 'assistant'
-                  ? 'bg-white text-[hsl(var(--foreground))] border border-[hsl(var(--border))] rounded-bl-[6px]'
-                  : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-br-[6px]'
-              }`}>
-                <p className="m-0 text-[0.9375rem] leading-[1.6] whitespace-pre-wrap break-words">{msg.content}</p>
+              <div
+                className={`max-w-[75%] px-[1.125rem] py-[0.875rem] rounded-2xl break-words ${
+                  msg.role === "assistant"
+                    ? "bg-white text-[hsl(var(--foreground))] border border-[hsl(var(--border))] rounded-bl-[6px]"
+                    : "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-br-[6px]"
+                }`}
+              >
+                <p className="m-0 text-[0.9375rem] leading-[1.6] whitespace-pre-wrap break-words">
+                  {msg.content}
+                </p>
               </div>
             </div>
           ))}
@@ -179,7 +217,9 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
         <div className="flex gap-3 px-6 py-4 border-t border-[var(--md-outline-variant)] bg-[var(--md-surface)] shrink-0">
           <textarea
             className="flex-1 px-4 py-3 border border-[hsl(var(--input))] rounded-3xl text-[0.9375rem] font-inherit outline-none transition-colors bg-[hsl(var(--background))] text-[hsl(var(--foreground))] resize-none max-h-[120px] focus:border-[hsl(var(--ring))] placeholder:text-[hsl(var(--muted-foreground))] disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder={lang === 'th' ? 'พิมพ์ข้อความ...' : 'Type a message...'}
+            placeholder={
+              lang === "th" ? "พิมพ์ข้อความ..." : "Type a message..."
+            }
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -231,14 +271,21 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
 };
 
 // ==================== ChatRoom ====================
-export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBack }) => {
+export const ChatRoom = ({
+  db,
+  patientId,
+  doctorId,
+  currentUser,
+  otherUser,
+  onBack,
+}) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -256,9 +303,9 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map(doc => ({
+      const msgs = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
 
       // Sort by timestamp manually (ascending - oldest first)
@@ -285,7 +332,7 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
 
     setSending(true);
     const messageText = newMessage.trim();
-    setNewMessage('');
+    setNewMessage("");
 
     try {
       // Use Firestore Timestamp instead of serverTimestamp
@@ -298,7 +345,7 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
         senderName: currentUser.displayName || currentUser.email,
         text: messageText,
         timestamp: now,
-        read: false
+        read: false,
       });
     } catch (error) {
       console.error("Error sending message:", error);
@@ -322,8 +369,12 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
           <FaUser size={24} color="#c0d1f0" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="m-0 text-base font-semibold text-[hsl(var(--foreground))]">{otherUser.name}</h3>
-          <span className="text-sm text-[hsl(var(--muted-foreground))] capitalize">{otherUser.role}</span>
+          <h3 className="m-0 text-base font-semibold text-[hsl(var(--foreground))]">
+            {otherUser.name}
+          </h3>
+          <span className="text-sm text-[hsl(var(--muted-foreground))] capitalize">
+            {otherUser.role}
+          </span>
         </div>
       </div>
 
@@ -336,26 +387,34 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
           messages.map((message) => (
             <div
               key={message.id}
-              className={`flex w-full ${message.senderId === currentUser.uid ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-[600px] px-[1.125rem] py-[0.875rem] rounded-2xl break-words shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${
+              className={`flex w-full ${
                 message.senderId === currentUser.uid
-                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-br-[6px]'
-                  : 'bg-white text-[hsl(var(--foreground))] border border-[hsl(var(--border))] rounded-bl-[6px]'
-              }`}>
-                <p className="m-0 mb-1 text-[0.9375rem] leading-[1.6] whitespace-pre-wrap break-words">{message.text}</p>
+                  ? "justify-end"
+                  : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-[600px] px-[1.125rem] py-[0.875rem] rounded-2xl break-words shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${
+                  message.senderId === currentUser.uid
+                    ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] rounded-br-[6px]"
+                    : "bg-white text-[hsl(var(--foreground))] border border-[hsl(var(--border))] rounded-bl-[6px]"
+                }`}
+              >
+                <p className="m-0 mb-1 text-[0.9375rem] leading-[1.6] whitespace-pre-wrap break-words">
+                  {message.text}
+                </p>
                 <span className="text-xs opacity-70 block mt-1">
                   {message.timestamp
                     ? (() => {
                         const time = message.timestamp.seconds
                           ? new Date(message.timestamp.seconds * 1000)
                           : message.timestamp;
-                        return time.toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit'
+                        return time.toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
                         });
                       })()
-                    : 'Sending...'}
+                    : "Sending..."}
                 </span>
               </div>
             </div>
@@ -364,7 +423,10 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
         <div ref={messagesEndRef} />
       </div>
 
-      <form className="flex gap-3 px-6 py-4 border-t border-[var(--md-outline-variant)] bg-[var(--md-surface)] shrink-0" onSubmit={handleSendMessage}>
+      <form
+        className="flex gap-3 px-6 py-4 border-t border-[var(--md-outline-variant)] bg-[var(--md-surface)] shrink-0"
+        onSubmit={handleSendMessage}
+      >
         <input
           type="text"
           value={newMessage}
@@ -386,7 +448,12 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
 };
 
 // ==================== ChatRoomList ====================
-export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) => {
+export const ChatRoomList = ({
+  db,
+  currentUser,
+  onSelectRoom,
+  selectedRoomId,
+}) => {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adminUser, setAdminUser] = useState(null);
@@ -411,9 +478,10 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
 
     // Listen to messages where this user is involved
     const messagesCol = collection(db, "messages");
-    const q = currentUser.role === 'admin'
-      ? query(messagesCol)
-      : currentUser.role === 'patient'
+    const q =
+      currentUser.role === "admin"
+        ? query(messagesCol)
+        : currentUser.role === "patient"
         ? query(messagesCol, where("patientId", "==", currentUser.uid))
         : query(messagesCol, where("doctorId", "==", currentUser.uid));
 
@@ -421,9 +489,10 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
       const messagesByUser = {};
 
       // Group messages by the other user
-      snapshot.docs.forEach(doc => {
+      snapshot.docs.forEach((doc) => {
         const msg = doc.data();
-        const otherUserId = currentUser.role === 'patient' ? msg.doctorId : msg.patientId;
+        const otherUserId =
+          currentUser.role === "patient" ? msg.doctorId : msg.patientId;
 
         if (!messagesByUser[otherUserId]) {
           messagesByUser[otherUserId] = [];
@@ -451,31 +520,35 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
 
           rooms.push({
             roomId: `${currentUser.uid}_${otherUserId}`,
-            patientId: currentUser.role === 'patient' ? currentUser.uid : otherUserId,
-            doctorId: currentUser.role === 'patient' ? otherUserId : currentUser.uid,
+            patientId:
+              currentUser.role === "patient" ? currentUser.uid : otherUserId,
+            doctorId:
+              currentUser.role === "patient" ? otherUserId : currentUser.uid,
             otherUser: {
               uid: otherUserId,
               name: otherUser.displayName || otherUser.email,
-              role: otherUser.role
+              role: otherUser.role,
             },
-            lastMessage: lastMessage?.text || 'No messages yet',
-            lastMessageTime: lastMessage?.timestamp
+            lastMessage: lastMessage?.text || "No messages yet",
+            lastMessageTime: lastMessage?.timestamp,
           });
         }
       }
 
       // Add admin to chat list
       if (adminUser && currentUser.uid !== adminUser.uid) {
-        const adminRoomExists = rooms.some(room => room.otherUser.uid === adminUser.uid);
+        const adminRoomExists = rooms.some(
+          (room) => room.otherUser.uid === adminUser.uid
+        );
         if (!adminRoomExists) {
-          
           let patientIdForAdminChat;
           let doctorIdForAdminChat;
 
-          if(currentUser.role === 'patient'){
+          if (currentUser.role === "patient") {
             patientIdForAdminChat = currentUser.uid;
             doctorIdForAdminChat = adminUser.uid;
-          } else { // doctor
+          } else {
+            // doctor
             patientIdForAdminChat = currentUser.uid; // Doctor is the "patient" in this chat
             doctorIdForAdminChat = adminUser.uid;
           }
@@ -487,18 +560,18 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
             otherUser: {
               uid: adminUser.uid,
               name: adminUser.displayName || adminUser.email,
-              role: 'admin'
+              role: "admin",
             },
-            lastMessage: 'Chat with support',
-            lastMessageTime: null
+            lastMessage: "Chat with support",
+            lastMessageTime: null,
           });
         }
       }
 
       // Sort by last message time, but pin admin chat to top
       rooms.sort((a, b) => {
-        if (a.otherUser.role === 'admin') return -1;
-        if (b.otherUser.role === 'admin') return 1;
+        if (a.otherUser.role === "admin") return -1;
+        if (b.otherUser.role === "admin") return 1;
         if (!a.lastMessageTime) return 1;
         if (!b.lastMessageTime) return -1;
         return b.lastMessageTime.seconds - a.lastMessageTime.seconds;
@@ -512,14 +585,23 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
   }, [db, currentUser, adminUser]);
 
   if (loading) {
-    return <div className="p-12 text-center text-[var(--md-on-surface-variant)] flex-1 flex flex-col items-center justify-center">Loading conversations...</div>;
+    return (
+      <div className="p-12 text-center text-[var(--md-on-surface-variant)] flex-1 flex flex-col items-center justify-center">
+        Loading conversations...
+      </div>
+    );
   }
 
   if (chatRooms.length === 0) {
     return (
       <div className="p-12 text-center text-[var(--md-on-surface-variant)] flex-1 flex flex-col items-center justify-center">
-        <p className="my-2 text-sm font-medium text-[var(--md-on-surface)] text-[0.9375rem]">No conversations yet.</p>
-        <p className="my-2 text-sm">Book an appointment to start chatting with a {currentUser.role === 'patient' ? 'doctor' : 'patient'}.</p>
+        <p className="my-2 text-sm font-medium text-[var(--md-on-surface)] text-[0.9375rem]">
+          No conversations yet.
+        </p>
+        <p className="my-2 text-sm">
+          Book an appointment to start chatting with a{" "}
+          {currentUser.role === "patient" ? "doctor" : "patient"}.
+        </p>
       </div>
     );
   }
@@ -530,13 +612,18 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
         <div
           key={room.roomId}
           className={`flex items-center px-4 py-3 gap-[0.875rem] cursor-pointer border-b border-[var(--md-outline-variant)] transition-colors hover:bg-[var(--md-surface-container-high)] ${
-            selectedRoomId === room.roomId ? 'bg-[var(--md-surface-container-highest)]' : ''
+            selectedRoomId === room.roomId
+              ? "bg-[var(--md-surface-container-highest)]"
+              : ""
           }`}
           onClick={() => onSelectRoom(room)}
         >
           <div className="relative w-11 h-11 bg-[var(--md-primary-container)] rounded-full flex items-center justify-center shrink-0">
             <FaUser size={24} color="#c0d1f0" />
-            <FaCircle className="absolute bottom-[2px] right-[2px] text-[var(--md-success)] bg-[var(--md-surface)] rounded-full" size={10} />
+            <FaCircle
+              className="absolute bottom-[2px] right-[2px] text-[var(--md-success)] bg-[var(--md-surface)] rounded-full"
+              size={10}
+            />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-center mb-1 gap-2">
@@ -545,11 +632,13 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
               </h4>
               <span className="text-xs text-[var(--md-on-surface-variant)] shrink-0">
                 {room.lastMessageTime
-                  ? new Date(room.lastMessageTime.seconds * 1000).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit'
+                  ? new Date(
+                      room.lastMessageTime.seconds * 1000
+                    ).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })
-                  : ''}
+                  : ""}
               </span>
             </div>
             <p className="m-0 mb-1 text-sm text-[var(--md-on-surface-variant)] whitespace-nowrap overflow-hidden text-ellipsis">
