@@ -10,7 +10,7 @@ import {
   FaUserMd,
   FaUsers,
 } from "react-icons/fa";
-import { collection, onSnapshot, query, where, doc, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import "./Dashboards.css";
 import BotIcon from "../assets/ask ai.png";
 import { translations } from "../constants/translations";
@@ -211,10 +211,19 @@ export const PatientDashboard = ({ user, logout, db }) => {
     }
   }, [profileToView]);
 
-  const handleSaveProfile = () => {
-    alert("Profile Saved! (Demo)");
-    setProfileToView(profileData);
-    setIsProfileDirty(false);
+  const handleSaveProfile = async () => {
+    if (!user || !db) return;
+
+    const userRef = doc(db, "users", user.uid);
+    try {
+      await updateDoc(userRef, profileData);
+      alert("Profile Saved!");
+      setProfileToView({ ...user, ...profileData });
+      setIsProfileDirty(false);
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      alert("Failed to save profile.");
+    }
   };
 
   const navItems = [
@@ -452,10 +461,19 @@ export const DoctorDashboard = ({ user, logout, db }) => {
     }
   }, [profileToView]);
 
-  const handleSaveProfile = () => {
-    alert("Profile Saved! (Demo)");
-    setProfileToView(profileData);
-    setIsProfileDirty(false);
+  const handleSaveProfile = async () => {
+    if (!user || !db) return;
+
+    const userRef = doc(db, "users", user.uid);
+    try {
+      await updateDoc(userRef, profileData);
+      alert("Profile Saved!");
+      setProfileToView({ ...user, ...profileData });
+      setIsProfileDirty(false);
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      alert("Failed to save profile.");
+    }
   };
 
   const doctorNavItems = [
@@ -584,10 +602,19 @@ export const AdminDashboard = ({ user, logout, db }) => {
     }
   }, [profileToView]);
 
-  const handleSaveProfile = () => {
-    alert("Profile Saved! (Demo)");
-    setProfileToView(profileData);
-    setIsProfileDirty(false);
+  const handleSaveProfile = async () => {
+    if (!user || !db) return;
+
+    const userRef = doc(db, "users", user.uid);
+    try {
+      await updateDoc(userRef, profileData);
+      alert("Profile Saved!");
+      setProfileToView({ ...user, ...profileData });
+      setIsProfileDirty(false);
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      alert("Failed to save profile.");
+    }
   };
 
   const adminNavItems = [
