@@ -208,7 +208,10 @@ export const DashboardHeader = ({
   activeLang,
   setActiveLang,
   translations,
-  notifications = []
+  notifications = [],
+  showSearchBar = false,
+  searchQuery,
+  setSearchQuery
 }) => {
   const getRoleIcon = () => {
     if (userRole === 'admin') {
@@ -234,13 +237,17 @@ export const DashboardHeader = ({
       </div>
 
       {/* Search Bar */}
-      <div className="search-bar-header">
-        <FaSearch size={18} />
-        <input
-          type="text"
-          placeholder={translations[activeLang]?.searchPlaceholder || 'ค้นหาหมอ, แผนก...'}
-        />
-      </div>
+      {showSearchBar && (
+        <div className="search-bar-header">
+          <FaSearch size={18} />
+          <input
+            type="text"
+            placeholder={translations[activeLang]?.searchPlaceholder || 'ค้นหาหมอ, แผนก...'}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      )}
 
       {/* Right Actions */}
       <div className="header-actions-right">
@@ -355,11 +362,6 @@ export const DoctorCard = ({ name, specialty, hospital, cases, price, time, lang
           <span>{cases} {translations[lang].case}</span>
         </p>
       </div>
-
-      <span className="accredited">
-        <FaStar size={11} />
-        {translations[lang].accreditedBy}
-      </span>
     </div>
 
     {/* Right Column: Price + Button */}
