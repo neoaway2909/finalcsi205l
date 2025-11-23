@@ -33,6 +33,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
   Button,
   Input,
@@ -88,6 +89,9 @@ const UserEditModal = ({ user, onClose, onSave }) => {
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Edit User</DialogTitle>
+          <DialogDescription>
+            Make changes to the user's profile here. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
 
         <Separator />
