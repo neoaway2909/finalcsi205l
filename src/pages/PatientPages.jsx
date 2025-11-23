@@ -8,6 +8,7 @@ import { collection, query, where, onSnapshot, doc, getDoc, addDoc, getDocs } fr
 import { db } from '../firebase';
 import useAuth from '../hooks/useAuth';
 import { bookAppointment, createNotification } from '../firebase';
+import mainBannerImage from '../assets/821547.jpg'; // Add this line
 
 // ==================== AboutDoctorPage ====================
 export const AboutDoctorPage = ({ doctor, onBack, onBookAppointment }) => {
@@ -549,9 +550,7 @@ export const HomePage = ({ userName, activeTab, setActiveTab, isLoading, doctors
           <h2 className="banner-text">{translations[lang].welcomeBack}, {userName}!</h2>
           <p className="banner-subtext">{translations[lang].howFeeling}</p>
         </div>
-        <div className="banner-illustration-placeholder">
-          <span>(Illustration)</span>
-        </div>
+        <img src={mainBannerImage} alt="Main Banner" className="main-banner-image" />
       </div>
       <div className="action-icons-row-large">
         <ActionButton

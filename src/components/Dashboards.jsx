@@ -27,9 +27,14 @@ import { DashboardHeader } from "./CommonComponents";
 const getInitialProfileData = (user) => ({
   name: user.name || user.displayName || "",
   specialty: user.specialty || "",
+  gender: user.gender || "",
   data: user.data || "",
   dob: user.dob || "",
-  medicalHistory: user.medicalHistory || ""
+  medicalHistory: user.medicalHistory || "",
+  province: user.province || "",
+  district: user.district || "",
+  subDistrict: user.subDistrict || "",
+  phone: user.phone || ""
 });
 
 // ==================== PatientDashboard ====================
@@ -107,7 +112,7 @@ const RenderPageContent = ({
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
-      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} />;
+      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} />;
     default:
       return <HomePage userName={userName} activeTab={activeTab} setActiveTab={setActiveTab} isLoading={isLoading} doctors={doctors} BotIcon={BotIcon} lang={lang} onBook={onBook} />;
   }
@@ -128,6 +133,12 @@ export const PatientDashboard = ({ user, logout, db }) => {
   const [appointments, setAppointments] = useState([]);
   const [bookingTab, setBookingTab] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredDoctors = doctors.filter(doctor =>
+    doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Read URL path params to set initial viewing/booking state
   // Format: /doctor/:tab/:doctorId or /booking/:tab/:doctorId
@@ -338,6 +349,9 @@ export const PatientDashboard = ({ user, logout, db }) => {
         setActiveLang={setActiveLang}
         translations={translations}
         notifications={patientNotifications}
+        showSearchBar={true}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
       <div className="body-wrapper">
         <SideNav
@@ -360,7 +374,7 @@ export const PatientDashboard = ({ user, logout, db }) => {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 isLoading={isLoading}
-                doctors={doctors}
+                doctors={filteredDoctors}
                 BotIcon={BotIcon}
                 lang={activeLang}
                 profileData={profileData}
@@ -400,7 +414,8 @@ const RenderDoctorPageContent = ({
   handleSaveProfile,
   profileData,
   setProfileData,
-  db
+  db,
+  user
 }) => {
   switch (activeNav) {
     case 'queue':
@@ -408,7 +423,7 @@ const RenderDoctorPageContent = ({
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
-      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} />;
+      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} />;
     default:
       return <QueuePage lang={lang} db={db} />;
   }
@@ -518,6 +533,7 @@ export const DoctorDashboard = ({ user, logout, db }) => {
                 setIsProfileDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
                 db={db}
+                user={user}
               />
             </div>
           </div>
@@ -539,7 +555,8 @@ const RenderAdminPageContent = ({
   setIsProfileDirty,
   handleSaveProfile,
   profileData,
-  setProfileData
+  setProfileData,
+  user
 }) => {
   switch (activeNav) {
     case 'approvals':
@@ -548,8 +565,10 @@ const RenderAdminPageContent = ({
       return <DoctorManagementPage lang={lang} setProfileToView={setProfileToView} db={db} isDirty={isProfileDirty} handleSaveProfile={handleSaveProfile} />;
     case 'patients':
       return <PatientManagementPage lang={lang} setProfileToView={setProfileToView} db={db} isDirty={isProfileDirty} handleSaveProfile={handleSaveProfile} />;
+    case 'messages':
+      return <ChatPage lang={lang} />;
     case 'profile':
-      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} />;
+      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} />;
     default:
       return <ApprovalManagementPage lang={lang} db={db} />;
   }
@@ -621,6 +640,7 @@ export const AdminDashboard = ({ user, logout, db }) => {
     { id: "approvals", icon: FaUserCheck, label: { th: "คำขออนุมัติ", en: "Approvals" } },
     { id: "doctors", icon: FaUserMd, label: { th: "จัดการแพทย์", en: "Doctors" } },
     { id: "patients", icon: FaUsers, label: { th: "จัดการผู้ป่วย", en: "Patients" } },
+    { id: "messages", icon: FaComments, label: { th: "แชท", en: "Chat" } },
     { id: "profile", icon: FaUserAlt, label: { th: "โปรไฟล์", en: "Profile" } },
   ];
 
@@ -661,6 +681,7 @@ export const AdminDashboard = ({ user, logout, db }) => {
                 isProfileDirty={isProfileDirty}
                 setIsProfileDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
+                user={user}
               />
             </div>
           </div>
