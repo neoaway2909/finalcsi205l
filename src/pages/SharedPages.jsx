@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { FaUser, FaCalendarAlt as FaCalendarIcon, FaCheck, FaPlusCircle } from "react-icons/fa";
+import React, { useState, useCallback } from 'react';
+import { FaUser, FaCheck, FaCalendarAlt as FaCalendarIcon, FaPlusCircle } from "react-icons/fa";
 import { ChatRoomList, ChatRoom } from "../components/ChatComponents";
+import AddressDropdowns from '../components/AddressDropdowns';
 import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
 import { translations } from "../constants/translations";
@@ -80,8 +81,24 @@ export const ChatPage = ({ lang }) => {
 
 // ==================== ProfilePage ====================
 
-export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsDirty, handleSaveAll }) => {
-  const [isEditingHistory, setIsEditingHistory] = useState(false);
+export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsDirty, handleSaveAll, userRole }) => {
+  const [newMedicalHistoryItem, setNewMedicalHistoryItem] = useState('');
+
+  const handleAddItem = () => {
+    if (newMedicalHistoryItem.trim() === '') return;
+    const currentHistory = profileData.medicalHistory ? profileData.medicalHistory.split(',') : [];
+    const updatedHistory = [...currentHistory, newMedicalHistoryItem.trim()];
+    setProfileData(prev => ({ ...prev, medicalHistory: updatedHistory.join(',') }));
+    setNewMedicalHistoryItem('');
+    setIsDirty(true);
+  };
+
+  const handleRemoveItem = (itemToRemove) => {
+    const currentHistory = profileData.medicalHistory.split(',');
+    const updatedHistory = currentHistory.filter(item => item !== itemToRemove);
+    setProfileData(prev => ({ ...prev, medicalHistory: updatedHistory.join(',') }));
+    setIsDirty(true);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,8 +111,18 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
     e.target.style.height = (e.target.scrollHeight) + 'px';
   };
 
-  const handleDateInput = (e) => {
-    let value = e.target.value.replace(/[^0-9/]/g, '');
+  const onSave = () => {
+    handleSaveAll(profileData);
+  };
+
+    const handleAddressChange = useCallback((address) => {
+      setProfileData(prev => ({ ...prev, ...address }));
+      setIsDirty(true);
+    }, [setProfileData, setIsDirty]);
+  
+    const medicalHistoryItems = profileData.medicalHistory?.split(',').map(item => item.trim()).filter(item => item);
+   
+    const handleDateInput = (e) => {    let value = e.target.value.replace(/[^0-9/]/g, '');
     if (value.length > 10) value = value.substring(0, 10);
     if (e.nativeEvent.inputType !== 'deleteContentBackward') {
       if (value.length === 2 || value.length === 5) { value += '/'; }
@@ -105,19 +132,17 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
     setIsDirty(true);
   };
 
-  const handleMedicalHistorySave = () => {
-    setIsEditingHistory(false);
-    setIsDirty(true);
-  };
-
-  const onSave = () => {
-    handleSaveAll(profileData);
-  };
-
-  const medicalHistoryItems = profileData.medicalHistory?.split(',').map(item => item.trim()).filter(item => item);
-
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 relative">
+      {isDirty && (
+        <button
+          className="fixed bottom-10 right-10 bg-[#4CAF50] text-white border-none rounded-full w-14 h-14 flex items-center justify-center cursor-pointer z-50"
+          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+          onClick={onSave}
+        >
+          <FaCheck size={24} />
+        </button>
+      )}
       {/* Personal Information Section */}
       <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
         <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].personalInformation}</h3>
@@ -135,109 +160,127 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
               onChange={handleChange}
               onInput={autoGrow}
             />
-            <textarea
-              rows="1"
-              name="specialty"
-              className="w-full border-none bg-transparent resize-none overflow-hidden p-[5px] font-inherit text-base text-[#666]"
-              placeholder={translations[lang].specialty}
-              value={profileData.specialty}
+            {userRole === 'doctor' && (
+              <textarea
+                rows="1"
+                name="specialty"
+                className="w-full border-none bg-transparent resize-none overflow-hidden p-[5px] font-inherit text-base text-[#666]"
+                placeholder={translations[lang].specialty}
+                value={profileData.specialty}
+                onChange={handleChange}
+                onInput={autoGrow}
+              />
+            )}
+            <select
+              name="gender"
+              className="w-full border-none bg-transparent p-[5px] font-inherit text-sm text-[#888] appearance-none"
+              value={profileData.gender || ''}
               onChange={handleChange}
-              onInput={autoGrow}
-            />
+              style={{
+                background: `url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%20164.7c-4.7%204.7-12.3%204.7-17%200L146.2%2041.1c-4.7-4.7-12.3-4.7-17%200L5.3%20164.7c-4.7%204.7-4.7%2012.3%200%2017l17%2017c4.7%204.7%2012.3%204.7%2017%200l106-106.1L253%20198.7c4.7%204.7%2012.3%204.7%2017%200l17-17c4.7-4.7%204.7-12.3%200-17z%22%2F%3E%3C%2Fsvg%3E') no-repeat right 5px center`,
+                backgroundSize: '12px',
+                paddingRight: '25px', // Make space for the arrow
+                borderBottom: '1px solid #eee', // subtle line
+              }}
+            >
+              <option value="" disabled>{translations[lang].selectGender || 'Select Gender'}</option>
+              <option value="Male">{translations[lang].male || 'Male'}</option>
+              <option value="Female">{translations[lang].female || 'Female'}</option>
+              <option value="Other">{translations[lang].other || 'Other'}</option>
+              <option value="Prefer not to say">{translations[lang].preferNotToSay || 'Prefer not to say'}</option>
+            </select>
             <textarea
               rows="1"
-              name="data"
+              name="phone"
               className="w-full border-none bg-transparent resize-none overflow-hidden p-[5px] font-inherit text-sm text-[#888]"
-              placeholder={translations[lang].data}
-              value={profileData.data}
+              placeholder={translations[lang].phone || 'Phone Number'}
+              value={profileData.phone}
               onChange={handleChange}
               onInput={autoGrow}
             />
           </div>
         </div>
-        {isDirty && (
-          <button
-            className="absolute top-5 right-5 bg-[#4CAF50] text-white border-none rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
-            style={{ boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}
-            onClick={onSave}
-          >
-            <FaCheck size={20} />
-          </button>
-        )}
       </div>
 
       {/* Date of Birth Section */}
-      <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-        <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].placeholder}</h3>
-        <div className="relative">
-          <input
-            type="text"
-            name="dob"
-            placeholder={translations[lang].dayMonthYear}
-            className="w-full border border-[#ddd] rounded-[5px] p-[10px_15px] text-base"
-            value={profileData.dob}
-            onInput={handleDateInput}
-            maxLength="10"
-          />
-          <FaCalendarIcon
-            className="absolute right-[15px] top-1/2 -translate-y-1/2"
-            size={20}
-            color="#9BB8DD"
+      {userRole === 'patient' && (
+        <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].placeholder}</h3>
+          <div className="relative">
+            <input
+              type="text"
+              name="dob"
+              placeholder={translations[lang].dayMonthYear}
+              className="w-full border border-[#ddd] rounded-[5px] p-[10px_15px] text-base"
+              value={profileData.dob}
+              onInput={handleDateInput}
+              maxLength="10"
+            />
+            <FaCalendarIcon
+              className="absolute right-[15px] top-1/2 -translate-y-1/2"
+              size={20}
+              color="#9BB8DD"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Address Section */}
+      {userRole === 'patient' && (
+        <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].address || 'Address'}</h3>
+          <AddressDropdowns
+            lang={lang}
+            onAddressChange={handleAddressChange}
+            initialAddress={{
+              province: profileData.province,
+              district: profileData.district,
+              subDistrict: profileData.subDistrict,
+            }}
           />
         </div>
-        {isDirty && (
-          <button
-            className="absolute top-5 right-5 bg-[#4CAF50] text-white border-none rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
-            style={{ boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}
-            onClick={onSave}
-          >
-            <FaCheck size={20} />
-          </button>
-        )}
-      </div>
+      )}
 
       {/* Medical History Section */}
-      <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-        <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].medicalHistory}</h3>
-        <div className="flex justify-between items-start">
-          {isEditingHistory ? (
-            <textarea
-              name="medicalHistory"
-              className="w-full border-none bg-transparent resize-none overflow-hidden p-[5px] font-inherit"
-              placeholder={translations[lang].medicalHistoryPlaceholder}
-              value={profileData.medicalHistory}
-              onChange={handleChange}
-              onInput={autoGrow}
-              autoFocus
-            />
-          ) : (
-            medicalHistoryItems && medicalHistoryItems.length > 0 ? (
-              <ul className="list-disc pl-5 text-[#555]">
+      {userRole === 'patient' && (
+        <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+          <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].medicalHistory}</h3>
+          <div>
+            {medicalHistoryItems && medicalHistoryItems.length > 0 ? (
+              <ul className="list-disc pl-5 text-[#555] mb-4">
                 {medicalHistoryItems.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={index} className="flex justify-between items-center mb-2">
+                    <span>{item}</span>
+                    <button
+                      onClick={() => handleRemoveItem(item)}
+                      className="text-red-500 hover:text-red-700 font-bold"
+                    >
+                      &times;
+                    </button>
+                  </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-[#555] leading-relaxed whitespace-pre-wrap">{translations[lang].medicalHistoryPlaceholder}</p>
-            )
-          )}
-          <button
-            className="bg-none border-none cursor-pointer p-0 ml-5"
-            onClick={() => isEditingHistory ? handleMedicalHistorySave() : setIsEditingHistory(true)}
-          >
-            {isEditingHistory ? (<FaCheck size={28} color="#28a745" />) : (<FaPlusCircle size={28} color="#668ee0" />)}
-          </button>
+              <p className="text-[#555] leading-relaxed whitespace-pre-wrap mb-4">{translations[lang].medicalHistoryPlaceholder}</p>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newMedicalHistoryItem}
+                onChange={(e) => setNewMedicalHistoryItem(e.target.value)}
+                placeholder={translations[lang].addMedicalHistory || "Add new item"}
+                className="w-full border border-[#ddd] rounded-[5px] p-[10px_15px] text-base"
+              />
+              <button
+                onClick={handleAddItem}
+                className="bg-[#668ee0] text-white border-none rounded-[5px] px-4 py-2 cursor-pointer"
+              >
+                {translations[lang].add || "Add"}
+              </button>
+            </div>
+          </div>
         </div>
-        {isDirty && (
-          <button
-            className="absolute top-5 right-5 bg-[#4CAF50] text-white border-none rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
-            style={{ boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}
-            onClick={onSave}
-          >
-            <FaCheck size={20} />
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 };

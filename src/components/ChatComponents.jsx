@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaTimes, FaPaperPlane, FaRobot, FaUser, FaCircle, FaArrowLeft } from 'react-icons/fa';
-import { collection, query, where, onSnapshot, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 
 // ==================== AIChatModal ====================
 export const AIChatModal = ({ isOpen, onClose, lang }) => {
@@ -389,15 +389,33 @@ export const ChatRoom = ({ db, patientId, doctorId, currentUser, otherUser, onBa
 export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) => {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [adminUser, setAdminUser] = useState(null);
+
+  useEffect(() => {
+    if (!db) return;
+    const getAdmin = async () => {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("role", "==", "admin"));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const adminData = querySnapshot.docs[0].data();
+        adminData.uid = querySnapshot.docs[0].id;
+        setAdminUser(adminData);
+      }
+    };
+    getAdmin();
+  }, [db]);
 
   useEffect(() => {
     if (!db || !currentUser) return;
 
     // Listen to messages where this user is involved
     const messagesCol = collection(db, "messages");
-    const q = currentUser.role === 'patient'
-      ? query(messagesCol, where("patientId", "==", currentUser.uid))
-      : query(messagesCol, where("doctorId", "==", currentUser.uid));
+    const q = currentUser.role === 'admin'
+      ? query(messagesCol)
+      : currentUser.role === 'patient'
+        ? query(messagesCol, where("patientId", "==", currentUser.uid))
+        : query(messagesCol, where("doctorId", "==", currentUser.uid));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const messagesByUser = {};
@@ -446,8 +464,41 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
         }
       }
 
-      // Sort by last message time
+      // Add admin to chat list
+      if (adminUser && currentUser.uid !== adminUser.uid) {
+        const adminRoomExists = rooms.some(room => room.otherUser.uid === adminUser.uid);
+        if (!adminRoomExists) {
+          
+          let patientIdForAdminChat;
+          let doctorIdForAdminChat;
+
+          if(currentUser.role === 'patient'){
+            patientIdForAdminChat = currentUser.uid;
+            doctorIdForAdminChat = adminUser.uid;
+          } else { // doctor
+            patientIdForAdminChat = currentUser.uid; // Doctor is the "patient" in this chat
+            doctorIdForAdminChat = adminUser.uid;
+          }
+
+          rooms.push({
+            roomId: `${currentUser.uid}_${adminUser.uid}`,
+            patientId: patientIdForAdminChat,
+            doctorId: doctorIdForAdminChat,
+            otherUser: {
+              uid: adminUser.uid,
+              name: adminUser.displayName || adminUser.email,
+              role: 'admin'
+            },
+            lastMessage: 'Chat with support',
+            lastMessageTime: null
+          });
+        }
+      }
+
+      // Sort by last message time, but pin admin chat to top
       rooms.sort((a, b) => {
+        if (a.otherUser.role === 'admin') return -1;
+        if (b.otherUser.role === 'admin') return 1;
         if (!a.lastMessageTime) return 1;
         if (!b.lastMessageTime) return -1;
         return b.lastMessageTime.seconds - a.lastMessageTime.seconds;
@@ -458,7 +509,7 @@ export const ChatRoomList = ({ db, currentUser, onSelectRoom, selectedRoomId }) 
     });
 
     return () => unsubscribe();
-  }, [db, currentUser]);
+  }, [db, currentUser, adminUser]);
 
   if (loading) {
     return <div className="p-12 text-center text-[var(--md-on-surface-variant)] flex-1 flex flex-col items-center justify-center">Loading conversations...</div>;

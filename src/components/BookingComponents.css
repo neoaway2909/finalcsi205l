@@ -1,0 +1,168 @@
+/* src/components/BookingComponents.css */
+
+.doctor-profile-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.doctor-profile-header .doctor-photo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #e0e8f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.doctor-profile-header .info-section .name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.doctor-profile-header .info-section .specialty {
+  font-size: 1rem;
+  color: #668ee0;
+  margin: 5px 0;
+}
+
+.doctor-profile-header .info-section .details {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+
+.booking-calendar-container {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-nav .btn-icon {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-nav .btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+}
+
+.calendar-day {
+  font-weight: bold;
+  color: #999;
+}
+
+.calendar-date {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.calendar-date.not-current-month {
+  color: #ccc;
+}
+
+.calendar-date:not(.disabled):not(.unavailable):hover {
+  background-color: #f0f4ff;
+}
+
+.calendar-date.selected {
+  background-color: #668ee0;
+  color: white;
+}
+
+.calendar-date.disabled {
+  color: #ddd;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.calendar-date.unavailable {
+  color: #ffcccc;
+  cursor: not-allowed;
+}
+
+.booking-time-container {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.booking-time-container h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.time-slot {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.time-slot:hover {
+  background-color: #f0f4ff;
+}
+
+.time-slot.selected {
+  background-color: #668ee0;
+  color: white;
+  border-color: #668ee0;
+}
+
+.time-slot.booked {
+  background-color: #f9f9f9;
+  color: #ccc;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
