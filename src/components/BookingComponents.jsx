@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight, FaUser } from 'react-icons/fa';
 import { translations } from '../constants/translations';
+import './BookingComponents.css';
 
 // ==================== DoctorProfileHeader ====================
 
