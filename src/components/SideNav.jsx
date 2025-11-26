@@ -10,13 +10,22 @@ export const SideNav = ({ logout, activeNav, navItems, lang, isDirty, setIsDirty
       if (window.confirm(translations[lang].confirmLeave)) {
         handleSaveProfile();
         setIsDirty(false);
+        // When clicking on profile menu, reset to viewing own profile
+        if (itemId === 'profile') {
+          setProfileToView(user);
+        }
         navigate(`/${itemId}`);
       } else {
         setIsDirty(false);
+        // When clicking on profile menu, reset to viewing own profile
+        if (itemId === 'profile') {
+          setProfileToView(user);
+        }
         navigate(`/${itemId}`);
       }
     }
     else {
+      // When clicking on profile menu from other pages, reset to viewing own profile
       if (itemId === 'profile') {
         setProfileToView(user);
       }

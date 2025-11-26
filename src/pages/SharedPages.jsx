@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { FaUser, FaCheck, FaCalendarAlt as FaCalendarIcon, FaPlusCircle } from "react-icons/fa";
 import { ChatRoomList, ChatRoom } from "../components/ChatComponents";
 import AddressDropdowns from '../components/AddressDropdowns';
 import { db } from "../firebase";
+import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore';
 import useAuth from "../hooks/useAuth";
 import { translations } from "../constants/translations";
 
@@ -83,6 +84,72 @@ export const ChatPage = ({ lang }) => {
 
 export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsDirty, handleSaveAll, userRole }) => {
   const [newMedicalHistoryItem, setNewMedicalHistoryItem] = useState('');
+  const [appointments, setAppointments] = useState([]);
+  const [loadingAppointments, setLoadingAppointments] = useState(true);
+
+  // Use the role from profileData (the person being viewed) instead of userRole (the current user)
+  const viewingRole = profileData?.role || userRole;
+
+  // Check if admin is viewing a patient profile (should be read-only for some fields)
+  const isAdminViewingPatient = userRole === 'admin' && viewingRole === 'patient';
+
+  useEffect(() => {
+    // Load appointments for both patient and doctor profiles
+    if ((viewingRole === 'patient' || viewingRole === 'doctor') && profileData.id) {
+      setLoadingAppointments(true);
+
+      // Query based on role: patientId for patients, doctorId for doctors
+      const queryField = viewingRole === 'patient' ? 'patientId' : 'doctorId';
+      const appointmentsQuery = query(collection(db, 'appointments'), where(queryField, '==', profileData.id));
+
+      const unsubscribe = onSnapshot(appointmentsQuery, async (snapshot) => {
+        const appointmentsData = await Promise.all(snapshot.docs.map(async (appDoc) => {
+          const appointment = appDoc.data();
+
+          // For doctor profile, show patient name instead
+          if (viewingRole === 'doctor') {
+            let patientName = 'Unknown Patient';
+            if (appointment.patientId) {
+              const patientRef = doc(db, 'users', appointment.patientId);
+              const patientSnap = await getDoc(patientRef);
+              if (patientSnap.exists()) {
+                patientName = patientSnap.data().displayName || 'Unknown Patient';
+              }
+            }
+            return {
+              id: appDoc.id,
+              ...appointment,
+              patientName,
+            };
+          } else {
+            // For patient profile, show doctor name
+            let doctorName = 'Unknown Doctor';
+            if (appointment.doctorId) {
+              const doctorRef = doc(db, 'users', appointment.doctorId);
+              const doctorSnap = await getDoc(doctorRef);
+              if (doctorSnap.exists()) {
+                doctorName = doctorSnap.data().displayName || 'Unknown Doctor';
+              }
+            }
+            return {
+              id: appDoc.id,
+              ...appointment,
+              doctorName,
+            };
+          }
+        }));
+        setAppointments(appointmentsData);
+        setLoadingAppointments(false);
+      }, (error) => {
+        console.error("Error fetching appointments: ", error);
+        setLoadingAppointments(false);
+      });
+
+      return () => unsubscribe();
+    } else {
+      setLoadingAppointments(false);
+    }
+  }, [profileData.id, viewingRole]);
 
   const handleAddItem = () => {
     if (newMedicalHistoryItem.trim() === '') return;
@@ -153,14 +220,14 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
           <div className="flex-grow">
             <textarea
               rows="1"
-              name="name"
+              name="displayName"
               className="w-full border-none bg-transparent resize-none overflow-hidden p-[5px] font-inherit text-2xl font-bold"
               placeholder={translations[lang].firstNameLastName}
-              value={profileData.name}
+              value={profileData.displayName}
               onChange={handleChange}
               onInput={autoGrow}
             />
-            {userRole === 'doctor' && (
+            {viewingRole === 'doctor' && (
               <textarea
                 rows="1"
                 name="specialty"
@@ -202,8 +269,8 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
         </div>
       </div>
 
-      {/* Date of Birth Section */}
-      {userRole === 'patient' && (
+      {/* Date of Birth Section - Hidden for admin viewing patient */}
+      {viewingRole === 'patient' && !isAdminViewingPatient && (
         <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
           <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].placeholder}</h3>
           <div className="relative">
@@ -225,8 +292,8 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
         </div>
       )}
 
-      {/* Address Section */}
-      {userRole === 'patient' && (
+      {/* Address Section - Hidden for admin viewing patient */}
+      {viewingRole === 'patient' && !isAdminViewingPatient && (
         <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
           <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].address || 'Address'}</h3>
           <AddressDropdowns
@@ -241,8 +308,8 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
         </div>
       )}
 
-      {/* Medical History Section */}
-      {userRole === 'patient' && (
+      {/* Medical History Section - Hidden for admin viewing patient */}
+      {viewingRole === 'patient' && !isAdminViewingPatient && (
         <div className="bg-white p-5 rounded-[10px] relative" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
           <h3 className="text-xl font-bold mt-0 mb-5">{translations[lang].medicalHistory}</h3>
           <div>
@@ -281,6 +348,50 @@ export const ProfilePage = ({ lang, profileData, setProfileData, isDirty, setIsD
           </div>
         </div>
       )}
+
+      {/* Appointments Section - Show for both patient and doctor */}
+      {(viewingRole === 'patient' || viewingRole === 'doctor') && (
+        <AppointmentList appointments={appointments} isLoading={loadingAppointments} lang={lang} viewingRole={viewingRole} />
+      )}
+    </div>
+  );
+};
+
+const AppointmentList = ({ appointments, isLoading, lang, viewingRole }) => {
+  if (isLoading) {
+    return (
+      <div className="bg-white p-5 rounded-[10px]" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+        <h3 className="text-xl font-bold mt-0 mb-5">Appointments</h3>
+        <p>Loading appointments...</p>
+      </div>
+    );
+  }
+
+  if (appointments.length === 0) {
+    return (
+      <div className="bg-white p-5 rounded-[10px]" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+        <h3 className="text-xl font-bold mt-0 mb-5">Appointments</h3>
+        <p>No appointments found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white p-5 rounded-[10px]" style={{ boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+      <h3 className="text-xl font-bold mt-0 mb-5">Appointments</h3>
+      <div className="flex flex-col gap-4">
+        {appointments.map((app) => (
+          <div key={app.id} className="p-4 border rounded-lg flex justify-between items-center">
+            <div>
+              <p className="font-bold">{viewingRole === 'doctor' ? app.patientName : app.doctorName}</p>
+              <p className="text-sm text-gray-600">{new Date(app.date).toLocaleDateString(lang === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })} at {app.time}</p>
+            </div>
+            <span className={`px-3 py-1 text-sm rounded-full ${app.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+              {app.status}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
