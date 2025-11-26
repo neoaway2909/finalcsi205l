@@ -90,7 +90,8 @@ const UserEditModal = ({ user, onClose, onSave }) => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Edit User</DialogTitle>
           <DialogDescription>
-            Make changes to the user's profile here. Click save when you're done.
+            Make changes to the user's profile here. Click save when you're
+            done.
           </DialogDescription>
         </DialogHeader>
 
@@ -690,8 +691,7 @@ const DoctorManagementPage = ({
         handleSaveProfile();
       }
     }
-    setProfileToView(doc);
-    navigate("/profile");
+    navigate(`/view-profile/${doc.id}`);
   };
 
   const handleApprove = async (e, doctor) => {
@@ -1284,8 +1284,7 @@ const PatientManagementPage = ({
         handleSaveProfile();
       }
     }
-    setProfileToView(patient);
-    navigate("/profile");
+    navigate(`/view-profile/${patient.id}`);
   };
 
   const handleEdit = (e, patient) => {
