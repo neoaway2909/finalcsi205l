@@ -9,6 +9,7 @@ import {
   FaUserCheck,
   FaUserMd,
   FaUsers,
+  FaCalendarAlt as FaSchedule,
 } from "react-icons/fa";
 import { collection, onSnapshot, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import "./Dashboards.css";
@@ -18,6 +19,7 @@ import { SideNav } from "./SideNav";
 import { HomePage, AppointmentsPage, BookingPage, AboutDoctorPage } from "../pages/PatientPages";
 import { ChatPage, ProfilePage } from "../pages/SharedPages";
 import { QueuePage } from "../pages/DoctorPages";
+import DoctorSchedulePage from "../pages/DoctorSchedulePage";
 import { DoctorManagementPage, PatientManagementPage, ApprovalManagementPage } from "../pages/AdminPages";
 import { DashboardHeader } from "./CommonComponents";
 
@@ -25,7 +27,9 @@ import { DashboardHeader } from "./CommonComponents";
 
 // Helper function for initial profile data
 const getInitialProfileData = (user) => ({
-  name: user.name || user.displayName || "",
+  id: user.id || user.uid,
+  displayName: user.displayName || "",
+  role: user.role || "",
   specialty: user.specialty || "",
   gender: user.gender || "",
   data: user.data || "",
@@ -420,6 +424,8 @@ const RenderDoctorPageContent = ({
   switch (activeNav) {
     case 'queue':
       return <QueuePage lang={lang} db={db} />;
+    case 'schedule':
+      return <DoctorSchedulePage lang={lang} db={db} user={user} />;
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
@@ -493,6 +499,7 @@ export const DoctorDashboard = ({ user, logout, db }) => {
 
   const doctorNavItems = [
     { id: "queue", icon: FaListAlt, label: { th: "จัดการคิว", en: "Queue" } },
+    { id: "schedule", icon: FaSchedule, label: { th: "จัดตารางเวลา", en: "Schedule" } },
     { id: "messages", icon: FaComments, label: { th: "แชท", en: "Chat" } },
     { id: "profile", icon: FaUserAlt, label: { th: "โปรไฟล์", en: "Profile" } },
   ];
@@ -556,8 +563,39 @@ const RenderAdminPageContent = ({
   handleSaveProfile,
   profileData,
   setProfileData,
-  user
+  user,
+  profileToView,
+  isLoadingProfile
 }) => {
+  // Show skeleton loading for view-profile page
+  if (activeNav === 'view-profile' && isLoadingProfile) {
+    return (
+      <div style={{ padding: '2rem' }}>
+        <div className="skeleton-loader" style={{
+          height: '200px',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'loading 1.5s ease-in-out infinite',
+          borderRadius: '12px',
+          marginBottom: '1rem'
+        }} />
+        <div className="skeleton-loader" style={{
+          height: '400px',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'loading 1.5s ease-in-out infinite',
+          borderRadius: '12px'
+        }} />
+        <style>{`
+          @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   switch (activeNav) {
     case 'approvals':
       return <ApprovalManagementPage lang={lang} db={db} />;
@@ -568,7 +606,9 @@ const RenderAdminPageContent = ({
     case 'messages':
       return <ChatPage lang={lang} />;
     case 'profile':
-      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} />;
+      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} profileToView={profileToView} />;
+    case 'view-profile':
+      return <ProfilePage lang={lang} profileData={profileData} setProfileData={setProfileData} isDirty={isProfileDirty} setIsDirty={setIsProfileDirty} handleSaveAll={handleSaveProfile} userRole={user.role} profileToView={profileToView} />;
     default:
       return <ApprovalManagementPage lang={lang} db={db} />;
   }
@@ -578,10 +618,15 @@ export const AdminDashboard = ({ user, logout, db }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeLang, setActiveLang] = useState('th');
-  const [profileToView, setProfileToView] = useState(user);
+
+  // Don't initialize profileToView if we're on view-profile page
+  const initialProfileToView = location.pathname.startsWith('/view-profile') ? null : user;
+  const [profileToView, setProfileToView] = useState(initialProfileToView);
+
   const [isProfileDirty, setIsProfileDirty] = useState(false);
   const [profileData, setProfileData] = useState(() => getInitialProfileData(user));
   const [notifications, setNotifications] = useState([]);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
   useEffect(() => {
     if (!db) return;
@@ -606,7 +651,10 @@ export const AdminDashboard = ({ user, logout, db }) => {
     return () => unsubscribe();
   }, [db]);
 
-  const activeNav = location.pathname.slice(1) || "doctors";
+  // Extract the base path for routing (handles /view-profile/123 as 'view-profile')
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const activeNav = pathSegments[0] || "doctors";
+  const userId = pathSegments[1]; // For /view-profile/{id}
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -614,21 +662,52 @@ export const AdminDashboard = ({ user, logout, db }) => {
     }
   }, [location.pathname, navigate]);
 
+  // Load user profile when viewing /view-profile/{id}
   useEffect(() => {
-    if (profileToView) {
+    if (activeNav === 'view-profile' && userId && db) {
+      setIsLoadingProfile(true);
+      const userRef = doc(db, "users", userId);
+      getDoc(userRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const userData = { id: docSnap.id, ...docSnap.data() };
+          setProfileToView(userData);
+          setProfileData(getInitialProfileData(userData));
+          setIsProfileDirty(false);
+        } else {
+          alert('User not found');
+          navigate('/patients');
+        }
+      }).catch((error) => {
+        console.error('Error loading user:', error);
+        alert('Error loading user profile');
+      }).finally(() => {
+        setIsLoadingProfile(false);
+      });
+    }
+  }, [activeNav, userId, db, navigate]);
+
+  useEffect(() => {
+    if (profileToView && activeNav !== 'view-profile') {
       setProfileData(getInitialProfileData(profileToView));
       setIsProfileDirty(false);
     }
-  }, [profileToView]);
+  }, [profileToView, activeNav]);
 
   const handleSaveProfile = async () => {
-    if (!user || !db) return;
+    if (!db) return;
 
-    const userRef = doc(db, "users", user.uid);
+    // Use profileToView.id if viewing someone else's profile, otherwise use user.uid
+    const targetUserId = profileToView?.id || profileToView?.uid || user?.uid;
+    if (!targetUserId) {
+      alert("Cannot save: No user ID found");
+      return;
+    }
+
+    const userRef = doc(db, "users", targetUserId);
     try {
       await updateDoc(userRef, profileData);
       alert("Profile Saved!");
-      setProfileToView({ ...user, ...profileData });
+      setProfileToView({ ...profileToView, ...profileData });
       setIsProfileDirty(false);
     } catch (error) {
       console.error("Error updating profile: ", error);
@@ -679,9 +758,11 @@ export const AdminDashboard = ({ user, logout, db }) => {
                 profileData={profileData}
                 setProfileData={setProfileData}
                 isProfileDirty={isProfileDirty}
-                setIsProfileDirty={setIsProfileDirty}
+                setIsDirty={setIsProfileDirty}
                 handleSaveProfile={handleSaveProfile}
                 user={user}
+                profileToView={profileToView}
+                isLoadingProfile={isLoadingProfile}
               />
             </div>
           </div>
