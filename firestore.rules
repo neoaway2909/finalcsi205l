@@ -11,18 +11,26 @@ service cloud.firestore {
       // อนุญาตให้สร้างบัญชีใหม่ได้ถ้า UID ตรงกับ Auth UID
       allow create: if request.auth != null && request.auth.uid == userId;
 
-      // อนุญาตให้แก้ไขได้เฉพาะบัญชีตัวเอง และห้ามแก้ไข role, uid, email
-      allow update: if request.auth != null
-                    && request.auth.uid == userId
-                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email']);
+      // อนุญาตให้แก้ไขได้
+      allow update: if request.auth != null &&
+                    (
+                      request.auth.uid == userId ||  // ตัวเองแก้ได้
+                      request.auth.token.role == "admin"  // Admin แก้ได้ทุกคน
+                    ) &&
+                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email']);
 
-      // ห้ามลบบัญชีผู้ใช้ (ให้ Admin ทำผ่าน Admin SDK)
-      allow delete: if false;
+      // อนุญาตให้ admin ลบผู้ใช้อื่นได้
+      allow delete: if request.auth != null && request.auth.token.role == 'admin';
+
+      // Nested Unavailability Collection for Doctors
+      match /unavailability/{unavailabilityId} {
+        // Only the user themselves can read or write their own unavailability
+        allow read, write: if request.auth.uid == userId;
+      }
     }
 
     // Appointments Collection - การนัดหมาย
     match /appointments/{appointmentId} {
-      // ต้อง login ก่อนถึงจะอ่าน/เขียนได้
       allow read, write: if request.auth != null;
     }
 
