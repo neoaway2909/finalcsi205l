@@ -53,7 +53,7 @@ export const AIChatModal = ({ isOpen, onClose, lang }) => {
 
     try {
       // Call Google Gemini API with conversation history
-      const API_KEY = "AIzaSyAJ-1S_c-5dAmHFyjFPWcdIEyGBF1pG6v0";
+      const API_KEY = "AIzaSyBLXR1sT5QGPCxbpsSOa0P4NQonqA2tgBU";
 
       // Build conversation history for context
       const conversationHistory = messages
