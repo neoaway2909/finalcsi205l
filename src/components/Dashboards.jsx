@@ -135,9 +135,33 @@ export const PatientDashboard = ({ user, logout, db }) => {
   const [bookingDoctor, setBookingDoctor] = useState(null);
   const [viewingDoctor, setViewingDoctor] = useState(null);
   const [appointments, setAppointments] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [bookingTab, setBookingTab] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!db || !user) return;
+    const q = query(collection(db, "notifications"), where("patientId", "==", user.uid));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const notifs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort by timestamp manually (descending - newest first)
+        notifs.sort((a, b) => {
+          if (!a.timestamp) return 1;
+          if (!b.timestamp) return -1;
+          return b.timestamp.seconds - a.timestamp.seconds;
+        });
+        setNotifications(notifs);
+      },
+      (error) => {
+        console.error("Error fetching notifications:", error);
+        setNotifications([]);
+      }
+    );
+    return () => unsubscribe();
+  }, [db, user]);
 
   const filteredDoctors = doctors.filter(doctor =>
     doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -338,12 +362,6 @@ export const PatientDashboard = ({ user, logout, db }) => {
 
   const userName = user?.displayName || "First name";
 
-  const patientNotifications = [
-    { id: 1, title: 'ผลตรวจของคุณออกแล้ว', description: 'ผลตรวจเลือดของคุณพร้อมให้ดาวน์โหลด', time: '10 นาทีที่แล้ว' },
-    { id: 2, title: 'ยืนยันนัดหมาย', description: 'นัดหมายของคุณกับ นพ. สมชาย ได้รับการยืนยัน', time: '1 ชั่วโมงที่แล้ว' },
-    { id: 3, title: 'ข้อความใหม่', description: 'คุณมีข้อความใหม่จากพยาบาล', time: '3 ชั่วโมงที่แล้ว' }
-  ];
-
   return (
     <div className="full-dashboard-layout">
       <DashboardHeader
@@ -352,7 +370,7 @@ export const PatientDashboard = ({ user, logout, db }) => {
         activeLang={activeLang}
         setActiveLang={setActiveLang}
         translations={translations}
-        notifications={patientNotifications}
+        notifications={notifications}
         showSearchBar={true}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

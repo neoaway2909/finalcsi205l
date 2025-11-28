@@ -4,13 +4,13 @@ import { PatientCard, EmptyState, MedicalHistoryModal, ViewMedicalHistoryModal }
 import { FaUsers, FaClipboardList } from "react-icons/fa";
 import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 import useAuth from '../hooks/useAuth';
-import { addMedicalHistory, updateAppointmentStatus } from '../firebase';
+import { addMedicalHistory, updateAppointmentStatus, createNotification } from '../firebase';
 import { Badge, Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui";
 
 export const QueuePage = ({ lang, db }) => {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user } = useAuth(); // Doctor's user object
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewingHistoryFor, setViewingHistoryFor] = useState(null);
@@ -75,8 +75,29 @@ const handleModalSave = async (historyData) => {
 
   const handleCompleteAppointment = async (appointmentId) => {
     try {
+      // Find the completed appointment to get patient and doctor info
+      const completedAppointment = appointments.find(app => app.id === appointmentId);
+      if (!completedAppointment) {
+        console.error("Appointment not found for completion:", appointmentId);
+        return;
+      }
+
       await updateAppointmentStatus(appointmentId, 'completed');
       setAppointments(prev => prev.map(app => app.id === appointmentId ? { ...app, status: 'completed' } : app));
+
+      // Create notification for the patient
+      const doctorName = user?.displayName || user?.email || 'แพทย์';
+      const patientId = completedAppointment.patientId;
+
+      await createNotification({
+        patientId: patientId,
+        doctorId: user.uid,
+        title: 'การรักษาเสร็จสิ้น 🩺',
+        description: `การรักษาของคุณกับ ${doctorName} เสร็จสิ้นแล้ว. คุณสามารถดูประวัติการรักษาของคุณได้.`,
+        timestamp: new Date(),
+        read: false,
+      });
+
     } catch (error) {
       console.error("Error completing appointment: ", error);
     }
