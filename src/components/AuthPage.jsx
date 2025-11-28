@@ -469,7 +469,7 @@ const saveUserToFirestore = async (user, newRole = null) => {
         email: user.email,
         displayName: user.displayName || user.email.split("@")[0],
         role: finalRole,
-        requestedRole: requiresApproval ? newRole : null,
+        requestedRole: requiresApproval ? newRole : undefined,
         accountStatus: accountStatus,
         createdAt: new Date(),
         lastLogin: new Date(),
