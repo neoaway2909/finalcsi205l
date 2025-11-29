@@ -624,7 +624,6 @@ const ApprovalManagementPage = () => {
 // ==================== DoctorManagementPage ====================
 const DoctorManagementPage = ({
   lang,
-  setProfileToView,
   db,
   isDirty,
   handleSaveProfile,
@@ -1223,7 +1222,6 @@ const DoctorManagementPage = ({
 // ==================== PatientManagementPage ====================
 const PatientManagementPage = ({
   lang,
-  setProfileToView,
   db,
   isDirty,
   handleSaveProfile,
