@@ -19,9 +19,10 @@ import {
   where,
   doc,
   updateDoc,
-} from "firebase/firestore";
-import { db } from "../firebase";
-import { updateUserProfile, deleteUser } from "../firebase";
+  db,
+  updateUserProfile,
+  deleteUser,
+} from "../firebase";
 import {
   LoadingSkeletonRow,
   EmptyState,

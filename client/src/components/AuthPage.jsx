@@ -9,9 +9,10 @@ import {
   setDoc,
   doc,
   getDoc,
+  getAuth,
+  sendPasswordResetEmail
 } from "../firebase";
 import { FaUser, FaLock, FaUserMd, FaUserTie, FaCheck, FaFacebookF, FaGoogle, FaLine, FaEnvelope } from 'react-icons/fa';
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import "./AuthPage.css";
 
 // --- Internal Auth Components ---

@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { auth, db } from '../firebase';
-
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-
-import { doc, getDoc } from 'firebase/firestore'; 
+import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from '../firebase';
 
 
 
@@ -104,7 +100,7 @@ const useAuth = () => {
 
         if (error.code === 'permission-denied' || error.code === 'unavailable') {
 
-             await signOut(auth);
+          await signOut(auth);
 
         }
 
@@ -134,25 +130,25 @@ const useAuth = () => {
 
     if (user === undefined) {
 
-        // Firebase กำลังตรวจสอบ persistence -> รอก่อน ไม่ต้องทำอะไร
+      // Firebase กำลังตรวจสอบ persistence -> รอก่อน ไม่ต้องทำอะไร
 
-        return;
+      return;
 
     } else if (user === null) {
 
-        // User ไม่ได้ login จริง ๆ -> ตั้งค่าให้พร้อมเลย
+      // User ไม่ได้ login จริง ๆ -> ตั้งค่าให้พร้อมเลย
 
-        setUserProfile(null);
+      setUserProfile(null);
 
-        setIsAuthReady(true);
+      setIsAuthReady(true);
 
-        setLoading(false);
+      setLoading(false);
 
     } else if (user && user.uid) {
 
-        // ถ้ามี user (Login) -> ให้ไปดึง Profile
+      // ถ้ามี user (Login) -> ให้ไปดึง Profile
 
-        fetchUserRole(user.uid);
+      fetchUserRole(user.uid);
 
     }
 
@@ -164,19 +160,19 @@ const useAuth = () => {
 
   const logout = async () => {
 
-      await signOut(auth);
+    await signOut(auth);
 
   };
 
 
 
-  return { 
+  return {
 
-    user, 
+    user,
 
-    userProfile, 
+    userProfile,
 
-    loading, 
+    loading,
 
     isAuthReady,
 

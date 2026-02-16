@@ -5,7 +5,6 @@ import useAuth from "./hooks/useAuth";
 import AuthPage from "./components/AuthPage";
 import {
   PatientDashboard,
-  DoctorDashboard,
   AdminDashboard,
 } from "./components/Dashboards"; // Import Dashboards ทั้ง 3 ตัว
 import { db } from "./firebase"; // Import db
@@ -22,8 +21,7 @@ function App() {
       // Redirect ไปหน้าเริ่มต้นตาม role
       if (userProfile.role === 'patient') {
         navigate('/home', { replace: true });
-      } else if (userProfile.role === 'doctor') {
-        navigate('/queue', { replace: true });
+
       } else if (userProfile.role === 'admin') {
         navigate('/doctors', { replace: true });
       }
@@ -107,8 +105,7 @@ function App() {
   switch (userProfile.role) {
     case "patient":
       return <PatientDashboard user={userProfile} logout={logout} db={db} />;
-    case "doctor":
-      return <DoctorDashboard user={userProfile} logout={logout} db={db} />;
+
     case "admin":
       return <AdminDashboard user={userProfile} logout={logout} db={db} />;
     default:
