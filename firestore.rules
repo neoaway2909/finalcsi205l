@@ -14,10 +14,11 @@ service cloud.firestore {
       // อนุญาตให้แก้ไขได้
       allow update: if request.auth != null &&
                     (
-                      request.auth.uid == userId ||  // ตัวเองแก้ได้
-                      request.auth.token.role == "admin"  // Admin แก้ได้ทุกคน
-                    ) &&
-                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email']);
+                      // ผู้ใช้แก้โปรไฟล์ตัวเองได้ แต่เปลี่ยน role, uid, email ไม่ได้
+                      (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email'])) ||
+                      // Admin แก้ไขโปรไฟล์ใครก็ได้ (รวมถึง role)
+                      request.auth.token.role == "admin"
+                    );
 
       // อนุญาตให้ admin ลบผู้ใช้อื่นได้
       allow delete: if request.auth != null && request.auth.token.role == 'admin';

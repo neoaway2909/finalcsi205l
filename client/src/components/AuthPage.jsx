@@ -463,18 +463,23 @@ const saveUserToFirestore = async (user, newRole = null) => {
     const finalRole = requiresApproval ? 'patient' : newRole;
     const accountStatus = requiresApproval ? 'pending' : 'active';
 
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || user.email.split("@")[0],
+      role: finalRole,
+      accountStatus: accountStatus,
+      createdAt: new Date(),
+      lastLogin: new Date(),
+    };
+
+    if (requiresApproval) {
+      userData.requestedRole = newRole;
+    }
+
     await setDoc(
       userRef,
-      {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || user.email.split("@")[0],
-        role: finalRole,
-        requestedRole: requiresApproval ? newRole : null,
-        accountStatus: accountStatus,
-        createdAt: new Date(),
-        lastLogin: new Date(),
-      },
+      userData,
       { merge: true }
     );
     console.log(`User data saved/updated. Role: ${finalRole}, Status: ${accountStatus}`);
